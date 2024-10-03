@@ -19,10 +19,15 @@ public class Hotel implements Serializable {
     //FIXME define constructor(s)
     //FIXME define methods
 
+    public void registerNewAnimal(String idAnimal, String name, String idSpecie, String idHabitat) {
+        
+    }
+
     /**
      * Read text input file and create domain entities.
      *
-     * @param filename name of the text input file
+     * @param file
+     * name name of the text input file
      * @throws ImportFileException
      */
     void importFile(String filename) throws ImportFileException {
