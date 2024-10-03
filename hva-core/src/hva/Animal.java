@@ -1,16 +1,19 @@
 package hva;
 
+import java.util.ArrayList;
+
 public class Animal extends Specie{
     private String _idAnimal;
     private String _nameAnimal;
     private String _currentHabitat;
-
+    private ArrayList<String> _healthStatus;
     
-    public Animal(String id, String name, String habitat) {
-        super(id, name);
-        _idAnimal = id;
+    public Animal(String idAnimal, String name, String idHabitat) {
+        super();
+        _idAnimal = idAnimal;
         _nameAnimal = name;
-        _currentHabitat = habitat;
+        _currentHabitat = idHabitat;
+        _healthStatus = new ArrayList<>();
     }
     
     public String getIdAnimal() {
