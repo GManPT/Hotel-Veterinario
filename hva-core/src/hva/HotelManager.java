@@ -15,6 +15,10 @@ public class HotelManager {
 
     // FIXME maybe add more fields if needed
 
+    // Onde vai ser guardado o path do ficheiro associado ao hotel atual
+    private String _filePath;  
+
+    
     /**
      * Saves the serialized application's state into the file associated to the current network.
      *
@@ -23,7 +27,20 @@ public class HotelManager {
      * @throws IOException if there is some error while serializing the state of the network to disk.
      */
     public void save() throws FileNotFoundException, MissingFileAssociationException, IOException {
-        // FIXME implement serialization method
+        
+        // verifica se existe algum ficheiro associado de momento
+        if (_filePath == null) {
+            throw new MissingFileAssociationException();
+        }
+
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filePath)));
+            oos.writeObject(_hotel);
+            oos.close();
+          }
+        catch (FileNotFoundException e) {e.printStackTrace(); }
+        catch (IOException e) { e.printStackTrace(); }
+
     }
 
     /**
@@ -34,7 +51,16 @@ public class HotelManager {
      * @throws IOException if there is some error while serializing the state of the network to disk.
      */
     public void saveAs(String filename) throws FileNotFoundException, MissingFileAssociationException, IOException {
-        // FIXME implement serialization method
+
+        _filePath = filename;
+
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filePath)));
+            oos.writeObject(_hotel);
+            oos.close();
+          }
+        catch (FileNotFoundException e) {e.printStackTrace(); }
+        catch (IOException e) { e.printStackTrace(); }
     }
 
     /**
@@ -44,7 +70,20 @@ public class HotelManager {
      *         an error while processing this file.
      */
     public void load(String filename) throws UnavailableFileException {
-        // FIXME implement serialization method
+        
+        try {
+            ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)));
+            _hotel = (Hotel) ois.readObject();
+            ois.close();
+            _filePath = filename;
+          }
+          catch (FileNotFoundException e) {
+            throw new UnavailableFileException(filename);
+        } catch (IOException e) {
+            throw new UnavailableFileException(filename);
+        } catch (ClassNotFoundException e) {
+            throw new UnavailableFileException(filename);
+        }
     }
 
     /**

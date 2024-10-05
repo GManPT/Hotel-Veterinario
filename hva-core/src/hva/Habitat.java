@@ -11,16 +11,18 @@ public class Habitat {
     private int _area;
 
     // Necessario? Pode-se tornar ambos getters. Faz as mudancas que achares melhor
-    // private int _population;
-    // private int _numTrees;
+    private int _population;
+    private int _numTrees;
     
     private ArrayList<Tree> _trees;
     private Map<String, Animal> _animals;
-    private Map<String, Specie> _speciesInfluence;
+    private Map<String, String> _speciesInfluence;
 
-    public Habitat(String id, String name) {
+    public Habitat(String id, String name, int area) {
         _idHabitat = id;
         _name = name;
+        _area = area;
+        _numTrees = 0;
         _animals = new TreeMap<String, Animal>();
         _trees = new ArrayList<Tree>();
     }
@@ -37,6 +39,10 @@ public class Habitat {
         return _area;
     }
 
+    public void setArea(int newArea) {
+        _area = newArea;
+    }
+
     public int getNumberOfTrees() {
         return _trees.size();
     }
@@ -45,7 +51,8 @@ public class Habitat {
         return _animals.size();
     }
 
-    public void addAnimaltoHabitat (Animal a) {
+    public void addAnimaltoHabitat (String idAnimal,String name,String idHabitat) {
+        Animal a = new Animal(idAnimal, name, idHabitat);
         _animals.put(a.getIdAnimal(), a);
     }
 }

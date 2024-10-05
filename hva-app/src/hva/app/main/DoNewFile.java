@@ -1,7 +1,7 @@
 package hva.app.main;
 
 import hva.HotelManager;
-import pt.tecnico.uilib.forms.Form;
+// import pt.tecnico.uilib.forms.Form;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 //FIXME import other classes if needed

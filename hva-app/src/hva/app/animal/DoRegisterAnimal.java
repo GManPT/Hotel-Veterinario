@@ -5,9 +5,6 @@ import pt.tecnico.uilib.forms.Form;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 
-import hva.exceptions.DuplicateAnimalException;
-import hva.app.exceptions.DuplicateAnimalKeyException;
-
 class DoRegisterAnimal extends Command<Hotel> {
 
     DoRegisterAnimal(Hotel receiver) {
@@ -19,25 +16,16 @@ class DoRegisterAnimal extends Command<Hotel> {
 
     @Override
     protected final void execute() throws CommandException {
-        try {
-            String animalKey = stringField("animalKey");
-            String name = stringField("animalName");
-            String speciesKey = stringField("speciesKey");
+        String animalKey = stringField("animalKey");
+        String name = stringField("animalName");
+        String speciesKey = stringField("speciesKey");
+        String habitatKey = Form.requestString(hva.app.habitat.Prompt.habitatKey());
 
-            // Verificar se a espeecie existe
-            if (!_receiver.speciesExists(speciesKey)) {
-                // Ve o uilib (ou o UML se preferires) para ver o que faz isto
-                String speciesName = Form.requestString(Prompt.speciesName());
-                _receiver.registerNewSpecie(speciesKey, speciesName);
-            }
-            
-            String habitatKey = Form.requestString(hva.app.habitat.Prompt.habitatKey());
+        // tirei as verificações se a espécie já existe, isso vai ser feito no métido registerNewAnimAl()
+        // tás a lançar duplicateanimalexception em 3 sitios diferentes. Tava aqui um, outro no hotel e outro na espécie
 
-            // Chama o metodo do hotel
-            _receiver.registerNewAnimal(animalKey, name, speciesKey, habitatKey);
+        // Chama o metodo do hotel
 
-        } catch (DuplicateAnimalException e) {
-            throw new DuplicateAnimalKeyException(e);
-        }
+        _receiver.registerNewAnimal(animalKey, name, speciesKey, habitatKey);
     }
 }

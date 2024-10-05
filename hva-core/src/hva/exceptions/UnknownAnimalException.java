@@ -1,4 +1,4 @@
-package hva.exceptions;
+/*package hva.exceptions;
 
 import hva.app.exceptions.UnknownAnimalKeyException;
 
@@ -10,3 +10,4 @@ public class UnknownAnimalException extends Exception {
 
 }
 
+*/

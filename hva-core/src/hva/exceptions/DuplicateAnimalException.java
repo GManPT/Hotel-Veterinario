@@ -1,4 +1,4 @@
-package hva.exceptions;
+/*package hva.exceptions;
 
 import hva.app.exceptions.DuplicateAnimalKeyException;
 
@@ -9,3 +9,4 @@ public class DuplicateAnimalException extends Exception {
     }
 
 }
+*/

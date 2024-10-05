@@ -1,10 +1,10 @@
 package hva.app.main;
 
 import hva.HotelManager;
-import hva.exceptions.MissingFileAssociationException;
-import pt.tecnico.uilib.forms.Form;
+//import hva.exceptions.MissingFileAssociationException;
+//import pt.tecnico.uilib.forms.Form;
 import pt.tecnico.uilib.menus.Command;
-import java.io.IOException;
+//import java.io.IOException;
 //FIXME import other classes if needed
 
 class DoSaveFile extends Command<HotelManager> {
