@@ -2,8 +2,7 @@ package hva.app.vaccine;
 
 import hva.Hotel;
 import pt.tecnico.uilib.menus.Command;
-//import pt.tecnico.uilib.menus.CommandException;
-//FIXME import other classes if needed
+import pt.tecnico.uilib.menus.CommandException;
 
 class DoShowVaccinations extends Command<Hotel> {
 
@@ -13,6 +12,6 @@ class DoShowVaccinations extends Command<Hotel> {
 
     @Override
     protected final void execute() {
-        //FIXME implement command
+        _display.popup(_receiver.vaccinations());
     }
 }

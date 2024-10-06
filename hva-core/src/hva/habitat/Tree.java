@@ -36,6 +36,6 @@ public abstract class Tree {
 
     @Override
     public String toString() {
-        return "ARVORE|" + getIdTree() + "|" + getName() + "|" + getTreeAge() + getCleaningDifficulty() + "|";
+        return "ÁRVORE|" + getIdTree() + "|" + getName() + "|" + getTreeAge() + getCleaningDifficulty() + "|";
     }
 }

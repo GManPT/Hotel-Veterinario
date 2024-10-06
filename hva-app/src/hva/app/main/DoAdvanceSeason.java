@@ -2,7 +2,7 @@ package hva.app.main;
 
 import hva.HotelManager;
 import pt.tecnico.uilib.menus.Command;
-// import pt.tecnico.uilib.menus.CommandException;
+import pt.tecnico.uilib.menus.CommandException;
 //FIXME import other classes if needed
 
 class DoAdvanceSeason extends Command<HotelManager> {

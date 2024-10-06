@@ -4,6 +4,8 @@ import hva.Hotel;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 import pt.tecnico.uilib.forms.Form;
+import hva.app.exceptions.DuplicateTreeKeyException;
+import hva.exceptions.DuplicateTreeException;
 
 class DoAddTreeToHabitat extends Command<Hotel> {
 
@@ -18,19 +20,23 @@ class DoAddTreeToHabitat extends Command<Hotel> {
 
     @Override
     protected void execute() throws CommandException {
-        String habitatKey = stringField("habitatKey");
-        String treeKey = stringField("treeKey");
-        String treeName = stringField("treeName");
-        int treeAge = integerField("treeAge");
-        int treeDifficulty = integerField("treeDifficulty");
-        String treeType = "";
+        try {
+            String habitatKey = stringField("habitatKey");
+            String treeKey = stringField("treeKey");
+            String treeName = stringField("treeName");
+            int treeAge = integerField("treeAge");
+            int treeDifficulty = integerField("treeDifficulty");
+            String treeType = "";
 
-        while (!(treeType.equals("CADUCA") || treeType.equals("PERENE"))) {
-            treeType = Form.requestString(Prompt.treeType());
+            while (!(treeType.equals("CADUCA") || treeType.equals("PERENE"))) {
+                treeType = Form.requestString(Prompt.treeType());
+            }
+                
+            _receiver.plantTreeHabitat(habitatKey, treeKey, treeName, treeAge, treeDifficulty, treeType);
+
+        } catch (DuplicateTreeException e) {
+            throw new DuplicateTreeKeyException(e.getId());
         }
-            
-
-        _receiver.plantTreeHabitat(habitatKey, treeKey, treeName, treeAge, treeDifficulty, treeType);
     }
 
 }

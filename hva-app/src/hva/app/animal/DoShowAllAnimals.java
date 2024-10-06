@@ -2,7 +2,6 @@ package hva.app.animal;
 
 import hva.Hotel;
 import pt.tecnico.uilib.menus.Command;
-//FIXME import other classes if needed
 
 class DoShowAllAnimals extends Command<Hotel> {
 
