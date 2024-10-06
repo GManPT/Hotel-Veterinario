@@ -2,7 +2,7 @@ package hva.app.habitat;
 
 import hva.Hotel;
 import pt.tecnico.uilib.menus.Command;
-// import pt.tecnico.uilib.menus.CommandException;
+import pt.tecnico.uilib.menus.CommandException;
 //FIXME import other classes if needed
 
 class DoShowAllHabitats extends Command<Hotel> {
@@ -13,6 +13,6 @@ class DoShowAllHabitats extends Command<Hotel> {
 
     @Override
     protected void execute() {
-        //FIXME implement command
+        _display.popup(_receiver.habitatAndTrees());
     }
 }

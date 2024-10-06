@@ -13,8 +13,6 @@ public class HotelManager {
     /** This is the current hotel. */
     private Hotel _hotel = new Hotel();
 
-    // FIXME maybe add more fields if needed
-
     // Onde vai ser guardado o path do ficheiro associado ao hotel atual
     private String _filePath;  
 
