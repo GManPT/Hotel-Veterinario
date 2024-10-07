@@ -6,6 +6,5 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class Flora {
-    private int _currentSeason;
-    //private Map<String, Tree> _treeSeason;
+    // Por implementar
 }

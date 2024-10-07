@@ -6,19 +6,20 @@ import hva.exceptions.UnavailableFileException;
 import pt.tecnico.uilib.forms.Form;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
-//FIXME import other classes if needed
 
 class DoOpenFile extends Command<HotelManager> {
     DoOpenFile(HotelManager receiver) {
         super(Label.OPEN_FILE, receiver);
+        addStringField("filename", Prompt.openFile());
     }
 
     @Override
     protected final void execute() throws CommandException {
-        /* try {
-            //FIXME implement command
+        try {
+            String filename = stringField("filename");
+            _receiver.load(filename);
         } catch (UnavailableFileException e) {
             throw new FileOpenFailedException(e);
-        } */
+        }
     }
 }

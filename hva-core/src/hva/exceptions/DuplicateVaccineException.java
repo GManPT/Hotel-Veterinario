@@ -5,7 +5,6 @@ public class DuplicateVaccineException extends Exception {
     private String _id;
 
     public DuplicateVaccineException(String id) {
-        super(id);
         _id = id;
     }
 

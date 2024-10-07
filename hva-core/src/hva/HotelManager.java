@@ -35,8 +35,8 @@ public class HotelManager {
             ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filePath)));
             oos.writeObject(_hotel);
             oos.close();
-          }
-        catch (FileNotFoundException e) {e.printStackTrace(); }
+        } 
+        catch (FileNotFoundException e) { e.printStackTrace(); }
         catch (IOException e) { e.printStackTrace(); }
 
     }
@@ -91,9 +91,12 @@ public class HotelManager {
      * @throws ImportFileException
      */
     public void importFile(String filename) throws ImportFileException {
-        _hotel.importFile(filename);
+        try {
+            _hotel.importFile(filename);
+        } catch (UnrecognizedEntryException e) {
+            throw new ImportFileException(filename, e);
+        }
     }
-
 
     public Hotel getHotel() {
         return _hotel;

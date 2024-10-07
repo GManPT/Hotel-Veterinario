@@ -3,18 +3,22 @@ package hva.app.habitat;
 import hva.Hotel;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
-//FIXME import other classes if needed
+import pt.tecnico.uilib.forms.Form;
 
 class DoChangeHabitatArea extends Command<Hotel> {
 
     DoChangeHabitatArea(Hotel receiver) {
         super(Label.CHANGE_HABITAT_AREA, receiver);
-        //FIXME add command fields if needed
+        addStringField("habitatKey", Prompt.habitatKey());
+        addIntegerField("habitatArea", Prompt.habitatArea());
     }
 
     @Override
     protected void execute() throws CommandException {
-        //FIXME implement command
+        String habitatKey = stringField("habitatKey");
+        int habitatArea = integerField("habitatArea");
+
+        _receiver.changeHabitatArea(habitatKey, habitatArea);
     }
 
 }

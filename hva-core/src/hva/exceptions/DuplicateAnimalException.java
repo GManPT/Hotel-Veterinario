@@ -5,7 +5,6 @@ public class DuplicateAnimalException extends Exception {
     private String _id;
 
     public DuplicateAnimalException(String id) {
-        super(id);
         _id = id;
     }
 

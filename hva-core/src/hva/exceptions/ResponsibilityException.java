@@ -6,7 +6,6 @@ public class ResponsibilityException extends Exception {
     private String _responsibility;
 
     public ResponsibilityException(String id, String responsibility) {
-        super(id);
         _id = id;
         _responsibility = responsibility;
     }

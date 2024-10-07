@@ -5,7 +5,6 @@ public class DuplicateHabitatException extends Exception {
     private String _id;
 
     public DuplicateHabitatException(String id) {
-        super(id);
         _id = id;
     }
 

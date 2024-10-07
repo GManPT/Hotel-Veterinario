@@ -19,6 +19,10 @@ public class Keeper extends Employee {
             _habitats.add(h);
     }
 
+    public void removeHabitat(Habitat h) {
+        _habitats.remove(h);
+    }
+
     public String habitatList() {
         StringBuilder list = new StringBuilder();
 

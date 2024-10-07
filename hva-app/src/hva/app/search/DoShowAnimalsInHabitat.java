@@ -9,12 +9,13 @@ class DoShowAnimalsInHabitat extends Command<Hotel> {
 
     DoShowAnimalsInHabitat(Hotel receiver) {
         super(Label.ANIMALS_IN_HABITAT, receiver);
-        //FIXME add command fields if needed
+        addStringField("habitatKey", hva.app.habitat.Prompt.habitatKey());
     }
 
     @Override
     protected void execute() throws CommandException {
-        //FIXME implement command
+        String habitatKey = stringField("habitatKey");
+        _display.popup(_receiver.animalsInHabitat(habitatKey));
     }
 
 }

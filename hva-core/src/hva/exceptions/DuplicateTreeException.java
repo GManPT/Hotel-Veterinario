@@ -5,7 +5,6 @@ public class DuplicateTreeException extends Exception {
     private String _id;
 
     public DuplicateTreeException(String id) {
-        super(id);
         _id = id;
     }
 

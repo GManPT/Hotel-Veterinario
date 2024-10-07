@@ -9,12 +9,13 @@ class DoShowMedicalActsOnAnimal extends Command<Hotel> {
 
     DoShowMedicalActsOnAnimal(Hotel receiver) {
         super(Label.MEDICAL_ACTS_ON_ANIMAL, receiver);
-	//FIXME add command fields if needed
+        addStringField("animalKey", hva.app.animal.Prompt.animalKey());
     }
 
     @Override
     protected void execute() throws CommandException {
-        //FIXME implement command
+        String animalKey = stringField("animalKey");
+        _display.popup(_receiver.medicalActsOnAnimal(animalKey));
     }
 
 }

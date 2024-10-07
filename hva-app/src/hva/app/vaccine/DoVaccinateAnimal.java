@@ -6,6 +6,8 @@ import pt.tecnico.uilib.menus.CommandException;
 import pt.tecnico.uilib.forms.Form;
 import hva.exceptions.UnknownVeterinarianException;
 import hva.app.exceptions.UnknownVeterinarianKeyException;
+import hva.exceptions.VeterinarianAuthorizedException;
+import hva.app.exceptions.VeterinarianNotAuthorizedException;
 
 class DoVaccinateAnimal extends Command<Hotel> {
 
@@ -32,6 +34,8 @@ class DoVaccinateAnimal extends Command<Hotel> {
             }
         } catch(UnknownVeterinarianException e) {
             throw new UnknownVeterinarianKeyException(e.getId());
+        } catch (VeterinarianAuthorizedException e) {
+            throw new VeterinarianNotAuthorizedException(e.getIdVet(), e.getId());
         }
 
     }

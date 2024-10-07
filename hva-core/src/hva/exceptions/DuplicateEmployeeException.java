@@ -5,7 +5,6 @@ public class DuplicateEmployeeException extends Exception {
     private String _id;
 
     public DuplicateEmployeeException(String id) {
-        super(id);
         _id = id;
     }
 

@@ -13,6 +13,7 @@ class DoRegisterEmployee extends Command<Hotel> {
         super(Label.REGISTER_EMPLOYEE, receiver);
         addStringField("employeeKey", Prompt.employeeKey());
         addStringField("employeeName", Prompt.employeeName());
+        addOptionField("employeeType", Prompt.employeeType(), new String[] { "VET", "TRT" });
     }
 
     @Override
@@ -20,11 +21,7 @@ class DoRegisterEmployee extends Command<Hotel> {
         try {
             String employeeKey = stringField("employeeKey");
             String employeeName = stringField("employeeName"); 
-            String employeeType = "";
-
-            while(!(employeeType.equals("VET") || employeeType.equals("TRT"))){
-                employeeType = Form.requestString(Prompt.employeeType());
-            }
+            String employeeType = optionField("employeeType");
 
             _receiver.registerNewEmployee(employeeKey, employeeName, employeeType);
 

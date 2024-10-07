@@ -3,18 +3,24 @@ package hva.app.habitat;
 import hva.Hotel;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
-//FIXME import other classes if needed
+import pt.tecnico.uilib.forms.Form;
 
 class DoChangeHabitatInfluence extends Command<Hotel> {
 
     DoChangeHabitatInfluence(Hotel receiver) {
         super(Label.CHANGE_HABITAT_INFLUENCE, receiver);
-        //FIXME add command fields if needed
+        addStringField("habitatKey", Prompt.habitatKey());
+        addStringField("speciesKey", hva.app.animal.Prompt.speciesKey());
+        addOptionField("habitatInfluence", Prompt.habitatInfluence(), new String[] {"POS", "NEG", "NEU"});
     }
 
     @Override
     protected void execute() throws CommandException {
-        //FIXME implement command
+        String habitatKey = stringField("habitatKey");
+        String speciesKey = stringField("speciesKey");
+        String habitatInfluence = optionField("habitatInfluence");
+
+        _receiver.changeHabitatInfluence(habitatKey, speciesKey, habitatInfluence);
     }
 
 }
