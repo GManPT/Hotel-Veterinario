@@ -14,6 +14,7 @@ class DoSaveFile extends Command<HotelManager> {
 
     @Override
     protected final void execute() throws CommandException{
+		
 		try {
 			try {
 				_receiver.save();

@@ -1,5 +1,7 @@
 package hva.app.main;
 
+import java.io.IOException;
+
 import hva.HotelManager;
 import hva.app.exceptions.FileOpenFailedException;
 import hva.exceptions.UnavailableFileException;
@@ -15,10 +17,20 @@ class DoOpenFile extends Command<HotelManager> {
 
     @Override
     protected final void execute() throws CommandException {
+
+        if (_receiver.changed() && Form.confirm(Prompt.saveBeforeExit())) { 
+            DoSaveFile file = new DoSaveFile(_receiver);
+            file.execute();
+        }
+
         try {
             String filename = stringField("filename");
             _receiver.load(filename);
         } catch (UnavailableFileException e) {
+            throw new FileOpenFailedException(e);
+        } catch (IOException e) {
+            throw new FileOpenFailedException(e);
+        } catch (ClassNotFoundException e) {
             throw new FileOpenFailedException(e);
         }
     }

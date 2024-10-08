@@ -49,6 +49,19 @@ public class Hotel implements Serializable {
     public List<String> _wrongVaccinations;
 
 
+    // Atributo para verificar se houve alteracoes
+
+    private boolean _modified = false;
+
+    public void setModified(boolean mod) {
+        _modified = mod;
+    }
+
+    public boolean isModified() {
+        return _modified;
+    }
+
+
     public Hotel() {
         _species = new TreeMap<String, Specie>();
         _habitats = new TreeMap<String, Habitat>();
@@ -97,6 +110,7 @@ public class Hotel implements Serializable {
     public void registerNewSpecie(String idSpecie, String nameSpecie) {
         if (nameSpecie != null) {
             _species.put(idSpecie, new Specie(idSpecie, nameSpecie));
+            _modified = true;
         }
     }
 
@@ -113,6 +127,7 @@ public class Hotel implements Serializable {
         // Adicionar o animal ao seu habitat e especie
         _species.get(idSpecie).addAnimaltoSpecie(a);
         _habitats.get(idHabitat).addAnimaltoHabitat(a);
+        _modified = true;
     }
 
     public Collection<Animal> speciesAnimals() {
@@ -134,6 +149,8 @@ public class Hotel implements Serializable {
 
         // Adicionar ao novo habitat
         getHabitat(habitatKey).addAnimaltoHabitat(a);
+
+        _modified = true;
     }
 
 
@@ -155,14 +172,17 @@ public class Hotel implements Serializable {
         }
 
         _habitats.put(idHabitat, new Habitat(idHabitat, name, area));
+        _modified = true;
     }
 
     public void changeHabitatArea(String habitatKey, int area) {
         getHabitat(habitatKey).setArea(area);
+        _modified = true;
     }
 
     public void changeHabitatInfluence(String habitatKey, String speciesKey, String habitatInfluence) {
         getHabitat(habitatKey).setSpeciesInfluence(speciesKey, habitatInfluence);
+        _modified = true;
     }
 
     // Apenas arvores
@@ -199,6 +219,7 @@ public class Hotel implements Serializable {
         } else if (treeType.equals("PERENE")) {
             habitat.addTree(new EvergreenTree(idTree, treeName, treeAge, treeDifficulty));
         }
+        _modified = true;
     }
 
     public void plantTree(String idTree, String treeName, int treeAge, int treeDifficulty, String treeType) 
@@ -212,6 +233,7 @@ public class Hotel implements Serializable {
         } else if (treeType.equals("PERENE")) {
             _trees.put(idTree, new EvergreenTree(idTree, treeName, treeAge, treeDifficulty));
         }
+        _modified = true;
     }
 
     public Collection<Animal> animalsInHabitat(String idHabitat) {
@@ -245,6 +267,7 @@ public class Hotel implements Serializable {
         } else if (employeeType.equals("VET")) {
             _employees.put(idEmployee, new Veterinarian(idEmployee, nameEmployee));
         }
+        _modified = true;
     }
 
     public void addResponsability(String idEmployee, String id, boolean isVet)
@@ -261,6 +284,7 @@ public class Hotel implements Serializable {
         } else {
             ((Keeper) employee).addHabitat(getHabitat(id));
         }
+        _modified = true;
     }
 
     public void removeResponsibility(String idEmployee, String id) 
@@ -281,6 +305,7 @@ public class Hotel implements Serializable {
         } else {
             throw new ResponsibilityException(idEmployee, id);
         }
+        _modified = true;
     }
 
     public Collection<Employee> employees() {
@@ -321,6 +346,7 @@ public class Hotel implements Serializable {
         }
 
         _vaccines.put(idVaccine, new Vaccine(idVaccine, nameVaccine, approvedSpecies));
+        _modified = true;
     }
 
     public Collection<Vaccine> vaccines() {
@@ -367,6 +393,7 @@ public class Hotel implements Serializable {
         getVaccine(vaccineKey).addApplication(application);
         ((Veterinarian) getEmployee(veterinarianKey)).addHistoric(application);
         a.addVaccination(application);
+        _modified = true;
     }
 
     public List<String> getAllVaccinations() {

@@ -42,9 +42,9 @@ public class Keeper extends Employee {
         String habitats = habitatList();
 
         if (habitats.equals("")) {
-            return "TRATADOR" + super.toString();
+            return "TRT" + super.toString();
         } else {
-            return "TRATADOR" + super.toString() + "|" + habitats;
+            return "TRT" + super.toString() + "|" + habitats;
         }
     }
 }

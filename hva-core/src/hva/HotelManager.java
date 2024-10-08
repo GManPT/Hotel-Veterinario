@@ -16,6 +16,14 @@ public class HotelManager {
     // Onde vai ser guardado o path do ficheiro associado ao hotel atual
     private String _filePath;  
 
+    public boolean changed() {
+        return _hotel.isModified();
+    }
+
+    public void resetHotel() {
+        _hotel = new Hotel();
+        _filePath = null;
+    }
     
     /**
      * Saves the serialized application's state into the file associated to the current network.
@@ -27,17 +35,19 @@ public class HotelManager {
     public void save() throws FileNotFoundException, MissingFileAssociationException, IOException {
         
         // verifica se existe algum ficheiro associado de momento
-        if (_filePath == null) {
+        if (_filePath == null || _filePath == "") {
             throw new MissingFileAssociationException();
         }
 
-        try {
-            ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filePath)));
+        try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filePath)))) {
             oos.writeObject(_hotel);
             oos.close();
         } 
-        catch (FileNotFoundException e) { e.printStackTrace(); }
-        catch (IOException e) { e.printStackTrace(); }
+
+        _hotel.setModified(false);
+        // catch (FileNotFoundException e) { e.printStackTrace(); }
+        // catch (IOException e) { e.printStackTrace(); }
+
 
     }
 
@@ -52,13 +62,7 @@ public class HotelManager {
 
         _filePath = filename;
 
-        try {
-            ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(_filePath)));
-            oos.writeObject(_hotel);
-            oos.close();
-          }
-        catch (FileNotFoundException e) {e.printStackTrace(); }
-        catch (IOException e) { e.printStackTrace(); }
+        save();
     }
 
     /**
@@ -67,21 +71,14 @@ public class HotelManager {
      * @throws UnavailableFileException if the specified file does not exist or there is
      *         an error while processing this file.
      */
-    public void load(String filename) throws UnavailableFileException {
+    public void load(String filename) throws UnavailableFileException, IOException, ClassNotFoundException {
         
-        try {
-            ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)));
+        try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
             _hotel = (Hotel) ois.readObject();
             ois.close();
             _filePath = filename;
-          }
-          catch (FileNotFoundException e) {
-            throw new UnavailableFileException(filename);
-        } catch (IOException e) {
-            throw new UnavailableFileException(filename);
-        } catch (ClassNotFoundException e) {
-            throw new UnavailableFileException(filename);
         }
+
     }
 
     /**
@@ -93,7 +90,8 @@ public class HotelManager {
     public void importFile(String filename) throws ImportFileException {
         try {
             _hotel.importFile(filename);
-        } catch (UnrecognizedEntryException e) {
+        }
+        catch (UnrecognizedEntryException e) {
             throw new ImportFileException(filename, e);
         }
     }

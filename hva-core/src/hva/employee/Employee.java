@@ -1,6 +1,7 @@
 package hva.employee;
+import java.io.Serializable;
 
-public abstract class Employee {
+public abstract class Employee implements Serializable{
     private String _idEmployee;
     private String _nameEmployee;
 

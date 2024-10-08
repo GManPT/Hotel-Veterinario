@@ -31,6 +31,8 @@ class DoRegisterAnimal extends Command<Hotel> {
             
             String habitatKey = Form.requestString(hva.app.habitat.Prompt.habitatKey());
 
+            // Não temos tambem que fazer uma verificacao para o habitat?
+
             // Chama o metodo do hotel
             _receiver.registerNewAnimal(animalKey, name, speciesKey, speciesName, habitatKey);
 

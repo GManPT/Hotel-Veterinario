@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Collection;
 import java.util.Collections;
+import java.io.Serializable;
 
-public class Animal {
+public class Animal implements Serializable{
     private String _idAnimal;
     private String _nameAnimal;
     private String _currentHabitat;

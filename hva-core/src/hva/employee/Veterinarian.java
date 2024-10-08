@@ -64,9 +64,9 @@ public class Veterinarian extends Employee {
         String species = getSpecialty();
 
         if (species.equals("")) {
-            return "VETERINÁRIO" + super.toString();
+            return "VET"+ "|" + super.toString();
         } else {
-            return "VETERINÁRIO" + super.toString() + "|" + species;
+            return "VET" + "|" + super.toString() + "|" + species;
         }
     }
 }

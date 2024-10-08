@@ -2,10 +2,10 @@ package hva.vaccine;
 
 import java.util.List;
 import java.util.ArrayList;
-
+import java.io.Serializable;
 import hva.animal.Specie;
 
-public class Vaccine {
+public class Vaccine implements Serializable{
     private String _idVaccine;
     private String _nameVaccine;
     private List<Specie> _approvedSpecies;

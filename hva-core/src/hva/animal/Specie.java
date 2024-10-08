@@ -4,9 +4,10 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Collection;
 import java.util.Collections;
+import java.io.Serializable;
 
 
-public class Specie {
+public class Specie implements Serializable{
     private String _idSpecie;
     private String _nameSpecie;
     private Map<String, Animal> _animals;

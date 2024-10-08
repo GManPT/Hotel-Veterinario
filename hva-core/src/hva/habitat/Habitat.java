@@ -5,11 +5,12 @@ import hva.animal.Animal;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-public class Habitat {
+public class Habitat implements Serializable{
     // Attributes
     private String _idHabitat;
     private String _name;
