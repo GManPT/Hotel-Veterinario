@@ -31,17 +31,19 @@ public class Vaccine implements Serializable{
     }
 
     public String speciesList() {
-        StringBuilder list = new StringBuilder();
+        String species = "";
 
-        for (Specie s : _approvedSpecies) {
-            list.append(s.getIdSpecie()).append(",");
+        if (!_approvedSpecies.isEmpty()) {
+            species = "|";
+
+            for (Specie s : _approvedSpecies) {
+                species += s.getIdSpecie() + ",";
+            }
+
+            species = species.substring(0, species.length() - 1);
         }
 
-        if (list.length() > 0) {
-            list.setLength(list.length() - 1);
-        }
-
-        return list.toString();
+        return species;
     }
 
     public boolean isApprovedFor(Specie s) {
@@ -54,6 +56,6 @@ public class Vaccine implements Serializable{
 
     @Override
     public String toString() {
-        return "VACINA|" + getIdVaccine() + "|" + getNameVaccine() + "|" + getNumberOfApplications() + "|" + speciesList();
+        return "VACINA|" + getIdVaccine() + "|" + getNameVaccine() + "|" + getNumberOfApplications() + speciesList();
     }
 }

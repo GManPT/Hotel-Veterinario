@@ -114,7 +114,8 @@ public class Hotel implements Serializable {
         }
     }
 
-    public void registerNewAnimal(String idAnimal, String nameAnimal, String idSpecie, String nameSpecie, String idHabitat) 
+    public void registerNewAnimal(String idAnimal, String nameAnimal, String idSpecie,
+                                String nameSpecie, String idHabitat) 
     throws DuplicateAnimalException {
         // Verificar se o id do animal ja existe
         if (animalExists(idAnimal)) {
@@ -337,12 +338,14 @@ public class Hotel implements Serializable {
         String[] species = speciesIdentifiers.split(",");
         ArrayList<Specie> approvedSpecies = new ArrayList<>();
 
-        for (String specie : species) {
-            if (!speciesExists(specie)) {
-                throw new UnknownSpeciesException(specie);
-            }
+        if (speciesIdentifiers.length() > 0) {
+            for (String specie : species) {
+                if (!speciesExists(specie)) {
+                    throw new UnknownSpeciesException(specie);
+                }
 
-            approvedSpecies.add(getSpecie(specie));
+                approvedSpecies.add(getSpecie(specie));
+            }
         }
 
         _vaccines.put(idVaccine, new Vaccine(idVaccine, nameVaccine, approvedSpecies));
@@ -447,11 +450,12 @@ public class Hotel implements Serializable {
 				
                 String[] parse = line.split("\\|");
                 switch (parse[0]) {
-                    case "ESPECIE" -> {
+                    case "ESPÉCIE" -> {
                         registerNewSpecie(parse[1], parse[2]);
                     }
                     case "ANIMAL" -> {
-                        registerNewAnimal(parse[1], parse[2], parse[3], parse[4], parse[5]);
+                        // 
+                        registerNewAnimal(parse[1], parse[2], parse[3], null, parse[4]);
                     }
                     case "HABITAT" -> {
                         registerNewHabitat(parse[1], parse[2], Integer.parseInt(parse[3]));
@@ -459,13 +463,17 @@ public class Hotel implements Serializable {
                     case "TRATADOR" -> {
                         registerNewEmployee(parse[1], parse[2], "TRT");
                     }
-                    case "VETERINARIO" -> {
+                    case "VETERINÁRIO" -> {
                         registerNewEmployee(parse[1], parse[2], "VET");
                     }
                     case "VACINA" -> {
-                        registerVaccine(parse[1], parse[2], parse[3]);
+                        if (parse.length == 4) {
+                            registerVaccine(parse[1], parse[2], parse[3]);
+                        } else {
+                            registerVaccine(parse[1], parse[2], "");
+                        }
                     }
-                    case "ARVORE" -> {
+                    case "ÁRVORE" -> {
                         plantTree(parse[1], parse[2], Integer.parseInt(parse[3]), Integer.parseInt(parse[4]), parse[5]);
                     }
                     default -> {
