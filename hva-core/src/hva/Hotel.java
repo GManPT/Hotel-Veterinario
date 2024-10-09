@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Collections;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -41,6 +42,7 @@ public class Hotel implements Serializable {
 
     // Definir atributos
     public Map<String, Specie> _species;
+    public LinkedHashMap<String, Animal> _animals;
     public Map<String, Habitat> _habitats;
     public Map<String, Employee> _employees;
     public Map<String, Vaccine> _vaccines;
@@ -64,6 +66,7 @@ public class Hotel implements Serializable {
 
     public Hotel() {
         _species = new TreeMap<String, Specie>();
+        _animals = new LinkedHashMap<String, Animal>();
         _habitats = new TreeMap<String, Habitat>();
         _employees = new TreeMap<String, Employee>();
         _vaccines = new TreeMap<String, Vaccine>();
@@ -128,17 +131,14 @@ public class Hotel implements Serializable {
         // Adicionar o animal ao seu habitat e especie
         _species.get(idSpecie).addAnimaltoSpecie(a);
         _habitats.get(idHabitat).addAnimaltoHabitat(a);
+
+        _animals.put(idAnimal, a);
+
         _modified = true;
     }
 
     public Collection<Animal> speciesAnimals() {
-        Collection<Animal> allAnimals = new ArrayList<>();
-
-        for (Specie specie : _species.values()) {
-            allAnimals.addAll(specie.animals());
-        }
-    
-        return Collections.unmodifiableCollection(allAnimals);
+        return Collections.unmodifiableCollection(_animals.values());
     }
 
     public void changeAnimalHabitat(String idAnimal, String habitatKey) {
