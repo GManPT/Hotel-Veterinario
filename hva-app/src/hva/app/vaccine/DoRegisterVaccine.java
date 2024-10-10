@@ -3,14 +3,17 @@ package hva.app.vaccine;
 import hva.Hotel;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
-import pt.tecnico.uilib.forms.Form;
 import hva.exceptions.DuplicateVaccineException;
 import hva.exceptions.UnknownSpeciesException;
 import hva.app.exceptions.UnknownSpeciesKeyException;
 import hva.app.exceptions.DuplicateVaccineKeyException;
 
+/**
+ * Command for registering a vaccine.
+ */
 class DoRegisterVaccine extends Command<Hotel> {
 
+    /** @param receiver */
     DoRegisterVaccine(Hotel receiver) {
         super(Label.REGISTER_VACCINE, receiver);
 	    addStringField("vaccineKey", Prompt.vaccineKey());
@@ -18,6 +21,7 @@ class DoRegisterVaccine extends Command<Hotel> {
         addStringField("species", Prompt.listOfSpeciesKeys());
     }
 
+    /** @see pt.tecnico.uilib.menu.Command#execute() */
     @Override
     protected final void execute() throws CommandException {
         try {

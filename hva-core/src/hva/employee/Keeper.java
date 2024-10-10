@@ -2,31 +2,49 @@ package hva.employee;
 
 import hva.habitat.Habitat;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 
 public class Keeper extends Employee {
-    private List<Habitat> _habitats;
+    private Map<String, Habitat> _habitats;
 
+    /**
+     * Constructor for the Keeper class
+     */
     public Keeper(String idEmployee, String nameEmployee) {
         super(idEmployee, nameEmployee);
-        _habitats = new ArrayList<Habitat>();
+        _habitats = new HashMap<String, Habitat>();
     }
 
+    /**
+     * Add a habitat to the keeper's list of habitats
+     * 
+     * @param h 
+     */
     public void addHabitat(Habitat h) {
-        if (!_habitats.contains(h))
-            _habitats.add(h);
+        if (_habitats.get(h) == null)
+            _habitats.put(h.getIdHabitat(), h);
     }
 
+    /**
+     * Remove a habitat from the keeper's list of habitats
+     * 
+     * @param h 
+     */
     public void removeHabitat(Habitat h) {
         _habitats.remove(h);
     }
 
+    /**
+     * Get the list of habitats of a keeper
+     * 
+     * @return List<Habitat> 
+     */
     public String habitatList() {
         StringBuilder list = new StringBuilder();
 
-        for (Habitat h : _habitats) {
+        for (Habitat h : _habitats.values()) {
             list.append(h.getIdHabitat()).append(",");
         }
 
@@ -37,14 +55,15 @@ public class Keeper extends Employee {
         return list.toString();
     }
 
+    /**
+     * keeper to string
+     * 
+     * @return keeper to string
+     */
     @Override
     public String toString() {
         String habitats = habitatList();
-
-        if (habitats.equals("")) {
-            return "TRT" + super.toString();
-        } else {
-            return "TRT" + super.toString() + "|" + habitats;
-        }
+        return habitats.equals("") ? "TRT" + super.toString() :
+                                    "TRT" + super.toString() + "|" + habitats;
     }
 }

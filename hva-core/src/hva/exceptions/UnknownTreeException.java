@@ -1,17 +1,16 @@
 package hva.exceptions;
 
 /**
- * Exception thrown when a species is not found in the database.
+ * Exception thrown when trying to access a habitat that does not exist.
  */
-public class UnknownSpeciesException extends Exception {
+public class UnknownTreeException extends Exception {
     /** Serial number for serialization. */
     private static final long serialVersionUID = 202407081733L;
     private String _id;
 
-    /** @param speciesId */
-    public UnknownSpeciesException(String speciesId) {
-        super(speciesId);
-        _id = speciesId;
+    /** @param id */
+    public UnknownTreeException(String id) {
+        super(id);
     }
 
     /**

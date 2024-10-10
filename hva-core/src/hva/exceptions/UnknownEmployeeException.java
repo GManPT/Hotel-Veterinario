@@ -1,17 +1,16 @@
 package hva.exceptions;
 
 /**
- * Exception thrown when a species is not found in the database.
+ * Exception thrown when an employee with a given ID is not found in the system.
  */
-public class UnknownSpeciesException extends Exception {
+public class UnknownEmployeeException extends Exception {
     /** Serial number for serialization. */
     private static final long serialVersionUID = 202407081733L;
     private String _id;
 
-    /** @param speciesId */
-    public UnknownSpeciesException(String speciesId) {
-        super(speciesId);
-        _id = speciesId;
+    /** @param id */
+    public UnknownEmployeeException(String id) {
+        _id = id;
     }
 
     /**

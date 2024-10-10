@@ -3,14 +3,17 @@ package hva.app.vaccine;
 import hva.Hotel;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
-import pt.tecnico.uilib.forms.Form;
 import hva.exceptions.UnknownVeterinarianException;
 import hva.app.exceptions.UnknownVeterinarianKeyException;
 import hva.exceptions.VeterinarianAuthorizedException;
 import hva.app.exceptions.VeterinarianNotAuthorizedException;
 
+/**
+ * Command for vaccinating an animal.
+ */
 class DoVaccinateAnimal extends Command<Hotel> {
-
+    
+    /** @param receiver */
     DoVaccinateAnimal(Hotel receiver) {
         super(Label.VACCINATE_ANIMAL, receiver);
         addStringField("vaccineKey", Prompt.vaccineKey());
@@ -18,6 +21,7 @@ class DoVaccinateAnimal extends Command<Hotel> {
         addStringField("animalKey", hva.app.animal.Prompt.animalKey());
     }
 
+    /** @see pt.tecnico.uilib.menu.Command#execute() */
     @Override
     protected final void execute() throws CommandException {
         try {

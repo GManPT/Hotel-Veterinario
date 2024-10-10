@@ -2,13 +2,19 @@ package hva.app.animal;
 
 import hva.Hotel;
 import hva.exceptions.DuplicateAnimalException;
+import hva.exceptions.UnknownHabitatException;
 import hva.app.exceptions.DuplicateAnimalKeyException;
+import hva.app.exceptions.UnknownHabitatKeyException;
 import pt.tecnico.uilib.forms.Form;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 
-
+/**
+ * Command for registering a new animal.
+ */
 class DoRegisterAnimal extends Command<Hotel> {
+    
+    /** @param receiver */
     DoRegisterAnimal(Hotel receiver) {
         super(Label.REGISTER_ANIMAL, receiver);
         addStringField("animalKey", Prompt.animalKey());
@@ -16,6 +22,7 @@ class DoRegisterAnimal extends Command<Hotel> {
         addStringField("speciesKey", Prompt.speciesKey());
     }
 
+    /** @see pt.tecnico.uilib.menu.Command#execute() */
     @Override
     protected final void execute() throws CommandException {
         try {
@@ -24,20 +31,18 @@ class DoRegisterAnimal extends Command<Hotel> {
             String speciesKey = stringField("speciesKey");
             String speciesName = null;
 
-            // Esta verificacao tem de estar presente aqui porque quer-se mostrar mais texto
+            /** Verify if the species exists, if not, ask for the species name */
             if (!_receiver.speciesExists(speciesKey)) {
                 speciesName = Form.requestString(Prompt.speciesName());
             }
             
             String habitatKey = Form.requestString(hva.app.habitat.Prompt.habitatKey());
-
-            // Não temos tambem que fazer uma verificacao para o habitat?
-
-            // Chama o metodo do hotel
             _receiver.registerNewAnimal(animalKey, name, speciesKey, speciesName, habitatKey);
 
         } catch (DuplicateAnimalException e) {
             throw new DuplicateAnimalKeyException(e.getId());
+        } catch (UnknownHabitatException e) {
+            throw new UnknownHabitatKeyException(e.getId());
         }
     }
 }

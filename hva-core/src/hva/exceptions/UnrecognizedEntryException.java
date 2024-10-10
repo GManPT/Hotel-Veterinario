@@ -2,8 +2,11 @@ package hva.exceptions;
 
 import java.io.Serial;
 
+/**
+ * Exception thrown when an entry is not recognized.
+ */
 public class UnrecognizedEntryException extends Exception {
-
+	/** Serial number for serialization. */
 	@Serial
 	private static final long serialVersionUID = 202407081733L;
 

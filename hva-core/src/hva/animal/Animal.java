@@ -14,6 +14,9 @@ public class Animal implements Serializable{
     private List<String> _vaccinations;
     private List<String> _healthStatus;
     
+    /**
+     * Constructor for the Animal class
+     */
     public Animal(String idAnimal, String name, String idSpecie, String idHabitat) {
         _idSpecie = idSpecie;
         _idAnimal = idAnimal;
@@ -23,44 +26,87 @@ public class Animal implements Serializable{
         _healthStatus = new ArrayList<>();
     }
     
+    /**
+     * getIdAnimal
+     * 
+     * @return idAnimal
+     */
     public String getIdAnimal() {
         return _idAnimal;
     }
 
+    /**
+     * getIdSpecie
+     * 
+     * @return idSpecie
+     */
     public String getIdSpecie() {
         return _idSpecie;
     }
 
+    /**
+     * getNameAnimal
+     * 
+     * @return nameAnimal
+     */
     public String getNameAnimal() {
         return _nameAnimal;
     }
 
+    /**
+     * getCurrentHabitat
+     * 
+     * @return currentHabitat
+     */
     public String getCurrentHabitat() {
         return _currentHabitat;
     }
 
+    /**
+     * getHealthStatus
+     * 
+     * @return healthStatus
+     */
     public String getHealthStatus() {
-        if (_healthStatus.isEmpty()) {
-            return "VOID";
-        }
-        return _healthStatus.toString();
+        return _healthStatus.isEmpty() ? "VOID" : _healthStatus.toString();
     }
 
+    /**
+     * setHabitat
+     * 
+     * @param id
+     */
     public void setHabitat(String id) {
         _currentHabitat = id;
     }
 
+    /**
+     * addVaccination
+     * 
+     * @param idVaccination
+     */
     public void addVaccination(String idVaccination) {
         _vaccinations.add(idVaccination);
     }
 
+    /**
+     * get Vaccinations
+     * 
+     * @return vaccinations
+     */
     public Collection<String> getVaccinations() {
         return Collections.unmodifiableCollection(_vaccinations);
     }
 
+    /**
+     * Animal to String
+     * 
+     * @return Animal to String
+     */
     @Override
     public String toString() {
-        return "ANIMAL|" + getIdAnimal() + "|" + getNameAnimal() + "|" + getIdSpecie() + "|" + getHealthStatus() + "|" + getCurrentHabitat();
+        return "ANIMAL|" + _idAnimal + "|" + _nameAnimal + "|" + _idSpecie + "|" +
+                getHealthStatus() + "|" + _currentHabitat;
     }
 
 }

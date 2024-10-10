@@ -10,16 +10,25 @@ import hva.exceptions.*;
  */
 public class HotelManager {
 
-    /** This is the current hotel. */
+    /** This is the current hotel */
     private Hotel _hotel = new Hotel();
 
-    // Onde vai ser guardado o path do ficheiro associado ao hotel atual
+    /** the path where the hotel is stored */
     private String _filePath;  
 
+    /** 
+     * hotel changed
+     * 
+     * @return true if the hotel has been modified since the last save
+     */
     public boolean changed() {
         return _hotel.isModified();
     }
 
+    /** 
+     * creates a new hotel
+     * file path is set to null
+     */
     public void resetHotel() {
         _hotel = new Hotel();
         _filePath = null;

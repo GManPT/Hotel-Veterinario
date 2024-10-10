@@ -3,12 +3,15 @@ package hva.app.employee;
 import hva.Hotel;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
-import pt.tecnico.uilib.forms.Form;
 import hva.app.exceptions.DuplicateEmployeeKeyException;
 import hva.exceptions.DuplicateEmployeeException;
 
+/**
+ * Command for registering a new employee.
+ */
 class DoRegisterEmployee extends Command<Hotel> {
 
+    /** @param receiver */
     DoRegisterEmployee(Hotel receiver) {
         super(Label.REGISTER_EMPLOYEE, receiver);
         addStringField("employeeKey", Prompt.employeeKey());
@@ -16,6 +19,7 @@ class DoRegisterEmployee extends Command<Hotel> {
         addOptionField("employeeType", Prompt.employeeType(), new String[] { "VET", "TRT" });
     }
 
+    /** @see pt.tecnico.uilib.menu.Command#execute() */
     @Override
     protected void execute() throws CommandException {
         try {

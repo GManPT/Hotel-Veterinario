@@ -1,14 +1,19 @@
 package hva.app.habitat;
 
 import hva.Hotel;
+import hva.exceptions.UnknownHabitatException;
+import hva.app.exceptions.UnknownHabitatKeyException;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
-import pt.tecnico.uilib.forms.Form;
 import hva.app.exceptions.DuplicateTreeKeyException;
 import hva.exceptions.DuplicateTreeException;
 
+/**
+ * Command for adding a tree to a habitat.
+ */
 class DoAddTreeToHabitat extends Command<Hotel> {
 
+    /** @param receiver */
     DoAddTreeToHabitat(Hotel receiver) {
         super(Label.ADD_TREE_TO_HABITAT, receiver);
         addStringField("habitatKey", Prompt.habitatKey());
@@ -19,6 +24,7 @@ class DoAddTreeToHabitat extends Command<Hotel> {
         addOptionField("treeType", Prompt.treeType(), new String[] {"CADUCA", "PERENE"});
     }
 
+    /** @see pt.tecnico.uilib.menu.Command#execute() */
     @Override
     protected void execute() throws CommandException {
         try {
@@ -33,6 +39,8 @@ class DoAddTreeToHabitat extends Command<Hotel> {
 
         } catch (DuplicateTreeException e) {
             throw new DuplicateTreeKeyException(e.getId());
+        } catch (UnknownHabitatException e) {
+            throw new UnknownHabitatKeyException(e.getId());
         }
     }
 
