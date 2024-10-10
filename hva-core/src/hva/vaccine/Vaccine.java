@@ -6,9 +6,17 @@ import java.io.Serializable;
 import hva.animal.Specie;
 
 public class Vaccine implements Serializable{
+
+    /** id of vaccine */
     private String _idVaccine;
+
+    /** name of vaccine */
     private String _nameVaccine;
+
+    /** list of approved species for the vaccine */
     private List<Specie> _approvedSpecies;
+
+    /** list of applications of the vaccine */
     private List<String> _applications;
 
     /**

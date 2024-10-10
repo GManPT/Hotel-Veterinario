@@ -12,12 +12,17 @@ import java.io.Serializable;
 public class Specie implements Serializable{
     private static final long serialVersionUID = 202407081733L;
     
+    /** id of the specie */
     private String _idSpecie;
+
+    /** name of the specie */
     private String _nameSpecie;
+
+    /** animals of the specie */
     private Map<String, Animal> _animals;
 
     /**
-     * Constructur of class Specie
+     * Constructor of class Specie
      */
     public Specie(String id, String name) {
         _animals = new TreeMap<String, Animal>(new CorrectComparator());

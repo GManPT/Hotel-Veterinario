@@ -7,6 +7,8 @@ import java.util.HashMap;
 
 
 public class Keeper extends Employee {
+
+    /** habitats of the keeper */
     private Map<String, Habitat> _habitats;
 
     /**

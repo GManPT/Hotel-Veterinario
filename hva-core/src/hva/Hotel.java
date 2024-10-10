@@ -418,7 +418,7 @@ public class Hotel implements Serializable {
             _trees.put(idTree, new EvergreenTree(idTree, treeName, treeAge, treeDifficulty));
         }
         _modified = true;
-    }
+    }   
 
     /**
      * deal with trees
@@ -427,9 +427,10 @@ public class Hotel implements Serializable {
      * @param trees
      * @throws DuplicateTreeException
      * @throws UnknownHabitatException
+     * @throws UnknownTreeException
      */
-    public void dealTrees(String idHabitat, String trees) throws DuplicateTreeException, UnknownHabitatException,
-    UnknownTreeException {
+    public void dealTrees(String idHabitat, String trees) throws UnknownHabitatException,
+    DuplicateTreeException, UnknownTreeException {
         String[] ts = trees.split(",");
         for (String tree : ts) {
             if (!treeExists(tree)) {
@@ -806,6 +807,9 @@ public class Hotel implements Serializable {
                         registerNewAnimal(parse[1], parse[2], parse[3], null, parse[4]);
                     }
                     case "HABITAT" -> {
+                        if (parse.length > 4) {
+                            areValidTrees(parse[1],parse[4]);
+                        }
                         registerNewHabitat(parse[1], parse[2], Integer.parseInt(parse[3]));
                         if (parse.length > 4) {
                             dealTrees(parse[1], parse[4]);

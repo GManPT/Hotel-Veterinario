@@ -1,7 +1,11 @@
 package hva.habitat;
 
 public class EvergreenTree extends Tree implements EffortSheetTypeProvider {
+
+    /** effort of the tree */
     private int _effort;
+
+    /** type of the tree */
     private final String _type = "PERENE";
 
     /** 

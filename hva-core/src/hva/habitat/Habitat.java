@@ -12,12 +12,23 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class Habitat implements Serializable{
+
+    /** id of the habitat */
     private String _idHabitat;
+
+    /** name of the habitat */
     private String _name;
+
+    /** area of the habitat */
     private int _area;
     
+    /** trees in the habitat */
     private Map<String, Tree> _trees;
+
+    /** animals in the habitat */
     private Map<String, Animal> _animals;
+
+    /** species influence */
     private Map<String, String> _speciesInfluence;
     
     /**

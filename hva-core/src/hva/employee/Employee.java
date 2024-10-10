@@ -2,7 +2,11 @@ package hva.employee;
 import java.io.Serializable;
 
 public abstract class Employee implements Serializable{
+
+    /** id of the employee */
     private String _idEmployee;
+
+    /** name of the employee */
     private String _nameEmployee;
 
     /**

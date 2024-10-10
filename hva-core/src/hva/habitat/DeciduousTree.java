@@ -1,7 +1,11 @@
 package hva.habitat;
 
 public class DeciduousTree extends Tree implements EffortSheetTypeProvider {
+
+    /** effort of the tree */
     private int _effort;
+
+    /** type of tree */
     private final String _type = "CADUCA";
 
     /** 

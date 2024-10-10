@@ -2,9 +2,17 @@ package hva.habitat;
 
 
 public abstract class Tree {
+
+    /** id of the tree */
     private String _idTree;
+
+    /** name of the tree */
     public String _nameTree;
+
+    /** age of the tree */
     private int _age;
+
+    /** cleaning difficulty of the tree */
     private int _cleaningDifficulty;
     
     /**

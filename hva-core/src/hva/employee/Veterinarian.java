@@ -10,7 +10,11 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class Veterinarian extends Employee {
+
+    /** species of the veterinarian */
     private Map<String, Specie> _species;
+
+    /** historic of vaccinations of the veterinarian */
     private List<String> _historic;
 
     /**

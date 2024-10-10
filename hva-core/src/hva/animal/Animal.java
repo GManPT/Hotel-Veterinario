@@ -7,11 +7,23 @@ import java.util.Collections;
 import java.io.Serializable;
 
 public class Animal implements Serializable{
+
+    /** id of the animal */
     private String _idAnimal;
+
+    /** name of the animal */
     private String _nameAnimal;
+
+    /** current habitat of the animal */
     private String _currentHabitat;
+
+    /** id of the specie of the animal */
     private String _idSpecie;
+
+    /** list of vaccinations of the animal */
     private List<String> _vaccinations;
+
+    /** list of health status of the animal */
     private List<String> _healthStatus;
     
     /**
