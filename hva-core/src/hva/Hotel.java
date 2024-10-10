@@ -807,9 +807,6 @@ public class Hotel implements Serializable {
                         registerNewAnimal(parse[1], parse[2], parse[3], null, parse[4]);
                     }
                     case "HABITAT" -> {
-                        if (parse.length > 4) {
-                            areValidTrees(parse[1],parse[4]);
-                        }
                         registerNewHabitat(parse[1], parse[2], Integer.parseInt(parse[3]));
                         if (parse.length > 4) {
                             dealTrees(parse[1], parse[4]);
