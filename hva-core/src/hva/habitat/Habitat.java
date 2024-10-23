@@ -110,6 +110,16 @@ public class Habitat implements Serializable {
     }
 
     /**
+     * get species influence
+     * 
+     * @param idSpecie
+     * @return Species Influence
+     */
+    public String getSpeciesInfluence(String idSpecie) {
+        return _speciesInfluence.get(idSpecie);
+    }
+
+    /**
      * has animals of specie
      * 
      * @param idSpecie
@@ -185,6 +195,26 @@ public class Habitat implements Serializable {
      */
     public boolean treeExists(String idTree) {
         return _trees.containsKey(idTree);
+    }
+
+    /**
+     * iguais returns the number of the same animals in the habitat
+     * 
+     * @param animal
+     * @return number of animals from same specie
+     */
+    public int iguais(String idAnimal) {
+
+        String s = _animals.get(idAnimal).getIdSpecie();
+        int count = 0;
+
+        for (String key : _animals.keySet()) {
+            if (_animals.get(key).getIdSpecie() == s) {
+                count += 1;
+            }
+        }
+
+        return count -1;
     }
 
     /**

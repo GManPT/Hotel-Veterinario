@@ -31,6 +31,7 @@ public abstract class Tree implements Serializable {
     
     public abstract String getType();
 
+
     /**
      * get the id of the tree
      * 

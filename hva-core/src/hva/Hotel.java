@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 
+
+import hva.Flora;
 import hva.habitat.Habitat;
 import hva.animal.Animal;
 import hva.animal.Specie;
@@ -94,6 +96,10 @@ public class Hotel implements Serializable {
      */
     public boolean isModified() {
         return _modified;
+    }
+
+    public Flora getFlora() {
+        return _season;
     }
 
     /**
@@ -784,6 +790,61 @@ public class Hotel implements Serializable {
 
         return getAnimal(animalKey).getVaccinations();
     }
+
+
+    
+    /**
+     * get the effort of a tree
+     * @param idTree
+     * @return effort
+     */
+    public double getTreeEffort(String idTree) {
+
+        Tree t = getTree(idTree);
+
+        double effort = t.getCleaningDifficulty() * getFlora().getSazonalEffort(idTree) * Math.log(t.getTreeAge() + 1);
+
+        return effort;
+    }
+
+    /**
+     * get the satisfaction of an animal
+     * 
+     * @param idAnimal
+     * @return satisfaction
+     */
+    public double getSatisfactionAnimal(String idAnimal) {
+
+        String currHabit = _animals.get(idAnimal).getCurrentHabitat();
+        Habitat h = _habitats.get(currHabit);
+
+        int equals = h.iguais(idAnimal);
+        int population = h.getPopulationNumber();
+        int diferent = population - (equals + 1);
+        int area = h.getArea();
+        String influ = h.getSpeciesInfluence(idAnimal);
+        int adequacy = 0;
+        
+        if (influ.equals("POS")) {
+            adequacy = 20;
+        } 
+        else if (influ.equals("NEG")) {
+            adequacy = -20;
+        }
+
+        double satisfaction = 20 + (3 * equals) - (2 * diferent) + (area / population) + adequacy;
+
+        return satisfaction;
+    }
+
+
+
+
+
+
+
+
+
 
     /**
      * Read text input file and create domain entities.
