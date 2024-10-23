@@ -1,9 +1,8 @@
 package hva.habitat;
 
-public class DeciduousTree extends Tree implements EffortSheetTypeProvider {
+public class DeciduousTree extends Tree {
 
-    /** effort of the tree */
-    private int _effort;
+
 
     /** type of tree */
     private final String _type = "CADUCA";
@@ -19,15 +18,6 @@ public class DeciduousTree extends Tree implements EffortSheetTypeProvider {
      */
     public DeciduousTree(String idTree, String nameTree, int age, int cleaningDifficulty) {
         super(idTree, nameTree, age, cleaningDifficulty);
-    }
-    
-    /**
-     * get effort
-     * 
-     * @return effort
-     */
-    public int getEffort() {
-        return _effort;
     }
 
     /**

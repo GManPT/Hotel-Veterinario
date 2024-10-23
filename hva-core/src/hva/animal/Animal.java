@@ -6,7 +6,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.io.Serializable;
 
-public class Animal implements Serializable{
+public class Animal implements Serializable {
+    /** Class Serial Number */
+    private static final long serialVersionUID = 202407081733L;
 
     /** id of the animal */
     private String _idAnimal;

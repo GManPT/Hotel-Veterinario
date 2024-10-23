@@ -11,7 +11,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-public class Habitat implements Serializable{
+public class Habitat implements Serializable {
+    /** Class Serial Number */
+    private static final long serialVersionUID = 202407081733L;
 
     /** id of the habitat */
     private String _idHabitat;
@@ -192,6 +194,6 @@ public class Habitat implements Serializable{
      */
     @Override
     public String toString() {
-        return "HABITAT|" + _idHabitat + "|" + _name + "|" + _area + "|" + getNumberOfTrees();
+        return "HABITAT|" + _idHabitat + "|" + _name + "|" + _area + "|" + _trees.size();
     }
 }

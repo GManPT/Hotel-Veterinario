@@ -11,7 +11,6 @@ import java.util.TreeMap;
 import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.Collections;
 
 import hva.habitat.Habitat;
@@ -50,32 +49,34 @@ public class Hotel implements Serializable {
     private static final long serialVersionUID = 202407081733L;
 
     /** Species */
-    public Map<String, Specie> _species;
+    private Map<String, Specie> _species;
 
     /** Animals */
-    public LinkedHashMap<String, Animal> _animals;
+    private Map<String, Animal> _animals;
 
     /** Habitats */
-    public Map<String, Habitat> _habitats;
+    private Map<String, Habitat> _habitats;
 
     /** Employees */
-    public Map<String, Employee> _employees;
+    private Map<String, Employee> _employees;
 
     /** Vaccines */
-    public Map<String, Vaccine> _vaccines;
+    private Map<String, Vaccine> _vaccines;
 
     /** Trees */
-    public Map<String, Tree> _trees;
+    private Map<String, Tree> _trees;
 
     /** Total Vaccinations */
-    public List<String> _vaccinations;
+    private List<String> _vaccinations;
 
     /** Wrong Vaccinations */
-    public List<String> _wrongVaccinations;
-
+    private List<String> _wrongVaccinations;
 
     /** Modified */
     private boolean _modified = false;
+
+    /** Flora */
+    private Flora _season;
 
     /** 
      * Set the modified attribute to a boolean
@@ -100,13 +101,17 @@ public class Hotel implements Serializable {
     */
     public Hotel() {
         _species = new TreeMap<String, Specie>(new CorrectComparator());
-        _animals = new LinkedHashMap<String, Animal>();
+        _animals = new TreeMap<String, Animal>(new CorrectComparator());
         _habitats = new TreeMap<String, Habitat>(new CorrectComparator());
         _employees = new TreeMap<String, Employee>(new CorrectComparator());
         _vaccines = new TreeMap<String, Vaccine>(new CorrectComparator());
         _trees = new TreeMap<String, Tree>(new CorrectComparator());
         _vaccinations = new ArrayList<String>();
         _wrongVaccinations = new ArrayList<String>();
+
+        // Flora corresponding to this hotel
+        _season = new Flora(this);
+        
     }
 
     /** 
@@ -115,8 +120,10 @@ public class Hotel implements Serializable {
      * @param idSpecie
      * @return true if specie exists
      */
-    public boolean speciesExists(String idSpecie) {
-        return _species.containsKey(idSpecie);
+    public void speciesExists(String idSpecie) throws UnknownSpeciesException {
+        if (!_species.containsKey(idSpecie)) {
+            throw new UnknownSpeciesException(idSpecie);
+        }
     }
 
     /** 
@@ -176,7 +183,6 @@ public class Hotel implements Serializable {
     public void registerNewAnimal(String idAnimal, String nameAnimal, String idSpecie,
                                 String nameSpecie, String idHabitat) 
     throws DuplicateAnimalException, UnknownHabitatException {
-        // Verificar se o id do animal ja existe
         if (animalExists(idAnimal)) {
             throw new DuplicateAnimalException(idAnimal);
         }
@@ -322,7 +328,7 @@ public class Hotel implements Serializable {
             throw new UnknownHabitatException(habitatKey);
         }
 
-        if (!speciesExists(speciesKey)) {
+        if (!_species.containsKey(speciesKey)) {
             throw new UnknownSpeciesException(speciesKey);
         }
 
@@ -526,16 +532,16 @@ public class Hotel implements Serializable {
             throw new UnknownEmployeeException(idEmployee);
         }
         
-        boolean speciesExists = speciesExists(id);
+        boolean specieExists = _species.containsKey(id);
         boolean habitatExists = habitatExists(id);
 
         /** Check if the specie or habitat exists */
-        if (!speciesExists && !habitatExists) {
+        if (!specieExists && !habitatExists) {
             throw new ResponsibilityException(idEmployee, id);
         }
 
         if (isVet) {
-            if (speciesExists) {
+            if (specieExists) {
                 ((Veterinarian) employee).addSpecie(getSpecie(id));
             } else {
                 throw new ResponsibilityException(idEmployee, id);
@@ -577,7 +583,7 @@ public class Hotel implements Serializable {
         }
 
         // Verificar se a especie ou habitat existe
-        if (speciesExists(id)) {
+        if (!_species.containsKey(id)) {
             ((Veterinarian) employee).removeSpecie(getSpecie(id));
         } else if (habitatExists(id)) {
             ((Keeper) employee).removeHabitat(getHabitat(id));
@@ -640,7 +646,7 @@ public class Hotel implements Serializable {
 
         if (speciesIdentifiers.length() > 0) {
             for (String specie : species) {
-                if (!speciesExists(specie)) {
+                if (!_species.containsKey(specie)) {
                     throw new UnknownSpeciesException(specie);
                 }
 

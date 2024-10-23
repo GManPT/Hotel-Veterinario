@@ -1,7 +1,11 @@
 package hva.habitat;
 
+import java.io.Serializable;
 
-public abstract class Tree {
+
+public abstract class Tree implements Serializable {
+    /** Class Serial Number */
+    private static final long serialVersionUID = 202407081733L;
 
     /** id of the tree */
     private String _idTree;
@@ -25,6 +29,8 @@ public abstract class Tree {
         _cleaningDifficulty = cleaningDifficulty;
     }
     
+    public abstract String getType();
+
     /**
      * get the id of the tree
      * 

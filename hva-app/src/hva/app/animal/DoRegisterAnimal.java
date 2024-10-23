@@ -5,6 +5,7 @@ import hva.exceptions.DuplicateAnimalException;
 import hva.exceptions.UnknownHabitatException;
 import hva.app.exceptions.DuplicateAnimalKeyException;
 import hva.app.exceptions.UnknownHabitatKeyException;
+import hva.exceptions.UnknownSpeciesException;
 import pt.tecnico.uilib.forms.Form;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
@@ -32,7 +33,9 @@ class DoRegisterAnimal extends Command<Hotel> {
             String speciesName = null;
 
             /** Verify if the species exists, if not, ask for the species name */
-            if (!_receiver.speciesExists(speciesKey)) {
+            try {
+                _receiver.speciesExists(speciesKey);
+            } catch (UnknownSpeciesException e) {
                 speciesName = Form.requestString(Prompt.speciesName());
             }
             

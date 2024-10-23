@@ -1,9 +1,7 @@
 package hva.habitat;
 
-public class EvergreenTree extends Tree implements EffortSheetTypeProvider {
+public class EvergreenTree extends Tree {
 
-    /** effort of the tree */
-    private int _effort;
 
     /** type of the tree */
     private final String _type = "PERENE";
@@ -19,15 +17,6 @@ public class EvergreenTree extends Tree implements EffortSheetTypeProvider {
      */
     public EvergreenTree(String idTree, String nameTree, int age, int cleaningDifficulty) {
         super(idTree, nameTree, age, cleaningDifficulty);
-    }
-    
-    /**
-     * tree effort
-     * 
-     * @return the effort of the tree
-     */
-    public int getEffort() {
-        return _effort;
     }
 
     /**
