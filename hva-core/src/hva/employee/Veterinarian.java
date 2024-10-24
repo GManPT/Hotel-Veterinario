@@ -74,6 +74,22 @@ public class Veterinarian extends Employee {
     }
 
     /**
+     * get veterinarian Species
+     * 
+     * @return list of species
+     */
+    public List<String> getVeterinarianSpecies() {
+
+        List<String> list = new ArrayList<String>();
+
+        for (String idSpecie : _species.keySet()) {
+            list.add(idSpecie); 
+        }
+        
+        return list;
+    }
+
+    /**
      * get specialty of the Veterinarian
      * 
      * @return specialty

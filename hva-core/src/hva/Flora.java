@@ -13,7 +13,7 @@ public class Flora implements Serializable{
     private Hotel _hotel;
 
     // Current Season: 0 - Primavera, 1 - Verao, 2 - Outono, 3 - Inverno
-    private int _currentSeason; 
+    private int _currentSeason;
 
     // Tree Map with the initial Season of each tree
     private Map<String,Integer> _treeSeason;

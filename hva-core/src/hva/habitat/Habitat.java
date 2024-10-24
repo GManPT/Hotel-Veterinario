@@ -1,7 +1,6 @@
 package hva.habitat;
 
 import hva.animal.Animal;
-import hva.CorrectComparator;
 
 import java.util.List;
 import java.util.Map;
@@ -40,8 +39,8 @@ public class Habitat implements Serializable {
         _idHabitat = id;
         _name = name;
         _area = area;
-        _trees = new TreeMap<String, Tree>(new CorrectComparator());
-        _animals = new TreeMap<String, Animal>(new CorrectComparator());
+        _trees = new TreeMap<String, Tree>(String.CASE_INSENSITIVE_ORDER);
+        _animals = new TreeMap<String, Animal>(String.CASE_INSENSITIVE_ORDER);
         _speciesInfluence = new TreeMap<String, String>();
     }
 
@@ -107,6 +106,22 @@ public class Habitat implements Serializable {
     public void addAnimaltoHabitat (Animal a) {
         _animals.put(a.getIdAnimal(), a);
         _speciesInfluence.put(a.getIdSpecie(), "NEU");
+    }
+
+    /**
+     * get Habitat trees
+     * 
+     * @return list of trees
+     */
+    public List<String> getHabitatTrees() {
+
+        List<String> list = new ArrayList<String>();
+
+        for (String idTree : _trees.keySet()) {
+            list.add(idTree); 
+        }
+        
+        return list;
     }
 
     /**
@@ -198,12 +213,12 @@ public class Habitat implements Serializable {
     }
 
     /**
-     * iguais returns the number of the same animals in the habitat
+     * Returns the number of the same animals in the habitat
      * 
-     * @param animal
+     * @param idAnimal
      * @return number of animals from same specie
      */
-    public int iguais(String idAnimal) {
+    public int animalEquals(String idAnimal) {
 
         String s = _animals.get(idAnimal).getIdSpecie();
         int count = 0;
@@ -212,6 +227,7 @@ public class Habitat implements Serializable {
             if (_animals.get(key).getIdSpecie() == s) {
                 count += 1;
             }
+             
         }
 
         return count -1;
@@ -224,6 +240,10 @@ public class Habitat implements Serializable {
      */
     @Override
     public String toString() {
-        return "HABITAT|" + _idHabitat + "|" + _name + "|" + _area + "|" + _trees.size();
+        String habitatTree = "HABITAT|" + _idHabitat + "|" + _name + "|" + _area + "|" + _trees.size();
+        for (Tree t : _trees.values()) {
+            habitatTree += "\n" + t.toString();
+        }
+        return habitatTree;
     }
 }

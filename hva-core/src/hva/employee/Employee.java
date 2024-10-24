@@ -3,6 +3,7 @@ import java.io.Serializable;
 
 public abstract class Employee implements Serializable{
 
+
     /** id of the employee */
     private String _idEmployee;
 
@@ -16,6 +17,7 @@ public abstract class Employee implements Serializable{
         _idEmployee = idEmployee;
         _nameEmployee = nameEmployee;
     }
+
 
     /**
      * Get the employee's ID

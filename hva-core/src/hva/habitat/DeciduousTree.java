@@ -4,8 +4,6 @@ public class DeciduousTree extends Tree {
 
 
 
-    /** type of tree */
-    private final String _type = "CADUCA";
 
     /** 
      * To be implemented in final delivery, left "GERARFOLHAS" as default 
@@ -21,21 +19,12 @@ public class DeciduousTree extends Tree {
     }
 
     /**
-     * get type
-     * 
-     * @return type of tree
-     */
-    public String getType() {
-        return _type;
-    }
-
-    /**
      * tree to string
      * 
      * @return tree to string
      */
     @Override
     public String toString() {
-        return super.toString() + getType() + "|" + _bioCycle;
+        return super.toString() + "CADUCA" + "|" + _bioCycle;
     }
 }

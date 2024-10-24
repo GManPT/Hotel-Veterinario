@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 
-
 import hva.Flora;
 import hva.habitat.Habitat;
 import hva.animal.Animal;
@@ -25,7 +24,6 @@ import hva.employee.Employee;
 import hva.employee.Keeper;
 import hva.employee.Veterinarian;
 import hva.vaccine.Vaccine;
-import hva.CorrectComparator;
 
 import hva.exceptions.DuplicateAnimalException;
 import hva.exceptions.DuplicateHabitatException;
@@ -42,6 +40,7 @@ import hva.exceptions.UnknownEmployeeException;
 import hva.exceptions.UnknownTreeException;
 import hva.exceptions.ImportFileException;
 import hva.exceptions.UnrecognizedEntryException;
+import hva.exceptions.DamagedVaccinationException;
 
 
 public class Hotel implements Serializable {
@@ -80,6 +79,24 @@ public class Hotel implements Serializable {
     /** Flora */
     private Flora _season;
 
+    /**
+    * Hotel Constructor
+    */
+    public Hotel() {
+        _species = new TreeMap<String, Specie>(String.CASE_INSENSITIVE_ORDER);
+        _animals = new TreeMap<String, Animal>(String.CASE_INSENSITIVE_ORDER);
+        _habitats = new TreeMap<String, Habitat>(String.CASE_INSENSITIVE_ORDER);
+        _employees = new TreeMap<String, Employee>(String.CASE_INSENSITIVE_ORDER);
+        _vaccines = new TreeMap<String, Vaccine>(String.CASE_INSENSITIVE_ORDER);
+        _trees = new TreeMap<String, Tree>(String.CASE_INSENSITIVE_ORDER);
+        _vaccinations = new ArrayList<String>();
+        _wrongVaccinations = new ArrayList<String>();
+
+        // Flora corresponding to this hotel
+        _season = new Flora(this);
+        
+    }
+
     /** 
      * Set the modified attribute to a boolean
      * 
@@ -100,24 +117,6 @@ public class Hotel implements Serializable {
 
     public Flora getFlora() {
         return _season;
-    }
-
-    /**
-    * Hotel Constructor
-    */
-    public Hotel() {
-        _species = new TreeMap<String, Specie>(new CorrectComparator());
-        _animals = new TreeMap<String, Animal>(new CorrectComparator());
-        _habitats = new TreeMap<String, Habitat>(new CorrectComparator());
-        _employees = new TreeMap<String, Employee>(new CorrectComparator());
-        _vaccines = new TreeMap<String, Vaccine>(new CorrectComparator());
-        _trees = new TreeMap<String, Tree>(new CorrectComparator());
-        _vaccinations = new ArrayList<String>();
-        _wrongVaccinations = new ArrayList<String>();
-
-        // Flora corresponding to this hotel
-        _season = new Flora(this);
-        
     }
 
     /** 
@@ -349,14 +348,11 @@ public class Hotel implements Serializable {
      * @return all habitats
      */
     public Collection<Tree> trees(String idHabitat) throws UnknownHabitatException {
-        Collection<Tree> allTrees = new ArrayList<>();
         if (!habitatExists(idHabitat)) {
             throw new UnknownHabitatException(idHabitat);
         }
 
-        Habitat habitat = getHabitat(idHabitat);
-        allTrees.addAll(habitat.getTrees());
-        return Collections.unmodifiableCollection(allTrees);
+        return _habitats.get(idHabitat).getTrees();
     }
 
     /**
@@ -364,15 +360,8 @@ public class Hotel implements Serializable {
      * 
      * @return all habitats and trees
      */
-    public Collection<Object> habitatAndTrees() {
-        Collection<Object> allHabitats = new ArrayList<>();
-
-        for (Habitat habitat : _habitats.values()) {
-            allHabitats.add(habitat);
-            allHabitats.addAll(habitat.getTrees());
-        }
-
-        return Collections.unmodifiableCollection(allHabitats);
+    public Collection<Habitat> habitatAndTrees() {
+        return Collections.unmodifiableCollection(_habitats.values());
     }
 
     /**
@@ -395,8 +384,10 @@ public class Hotel implements Serializable {
             throw new UnknownHabitatException(idHabitat);
         }
 
-        if (habitat.treeExists(idTree)) {
-            throw new DuplicateTreeException(idTree);
+        for (Habitat h : _habitats.values()) {
+            if (h.treeExists(idTree)) {
+                throw new DuplicateTreeException(idTree);
+            }
         }
 
         if (treeType.equals("CADUCA")) {
@@ -467,7 +458,7 @@ public class Hotel implements Serializable {
             throw new UnknownHabitatException(idHabitat);
         }
 
-        return getHabitat(idHabitat).getAnimals();
+        return _habitats.get(idHabitat).getAnimals();
     }
 
     /**
@@ -486,8 +477,14 @@ public class Hotel implements Serializable {
      * @param idEmployee
      * @return true if employee is a veterinarian
      */
-    public boolean isVet(String idEmployee) {
-        return _employees.get(idEmployee) instanceof Veterinarian;
+    public void isVet(String idEmployee) throws UnknownEmployeeException, UnknownVeterinarianException {
+        if (_employees.get(idEmployee) == null) {
+            throw new UnknownEmployeeException(idEmployee);
+        }
+
+        if (!(_employees.get(idEmployee) instanceof Veterinarian)) {
+            throw new UnknownVeterinarianException(idEmployee);
+        }
     }
 
     /**
@@ -523,43 +520,43 @@ public class Hotel implements Serializable {
     }
 
     /**
-     * add responsibility to an employee
+     * add responsibility to a veterinarian
      * 
      * @param idEmployee
-     * @param id
-     * @param isVet
+     * @param idSpecie
      * @throws ResponsibilityException
-     * @throws UnknownEmployeeException
      */
-    public void addResponsability(String idEmployee, String id, boolean isVet)
+    public void addResponsibilityVeterinarian(String idEmployee, String idSpecie)
+    throws ResponsibilityException {
+        Veterinarian vet = (Veterinarian) getEmployee(idEmployee);
+
+        if (!_species.containsKey(idSpecie)) {
+            throw new ResponsibilityException(idEmployee, idSpecie);
+        }
+
+        vet.addSpecie(getSpecie(idSpecie));
+        _modified = true;
+    }
+
+    /** 
+     * add responsibility to a keeper
+     * 
+     * @param idEmployee
+     * @param idHabitat
+     * @throws ResponsibilityException
+     */
+    public void addResponsibilityKeeper(String idEmployee, String idHabitat) 
     throws ResponsibilityException, UnknownEmployeeException {
-        Employee employee = getEmployee(idEmployee);
-        if (!employeeExists(idEmployee)) {
+        Keeper k = (Keeper) getEmployee(idEmployee);
+        if (k == null) {
             throw new UnknownEmployeeException(idEmployee);
         }
-        
-        boolean specieExists = _species.containsKey(id);
-        boolean habitatExists = habitatExists(id);
 
-        /** Check if the specie or habitat exists */
-        if (!specieExists && !habitatExists) {
-            throw new ResponsibilityException(idEmployee, id);
+        if (!_habitats.containsKey(idHabitat)) {
+            throw new ResponsibilityException(idEmployee, idHabitat);
         }
 
-        if (isVet) {
-            if (specieExists) {
-                ((Veterinarian) employee).addSpecie(getSpecie(id));
-            } else {
-                throw new ResponsibilityException(idEmployee, id);
-            }
-        } else {
-            if (habitatExists) {
-                ((Keeper) employee).addHabitat(getHabitat(id));
-            } else {
-                throw new ResponsibilityException(idEmployee, id);
-            }
-        }
-
+        k.addHabitat(getHabitat(idHabitat));
         _modified = true;
     }
 
@@ -567,7 +564,10 @@ public class Hotel implements Serializable {
     throws ResponsibilityException, UnknownEmployeeException {
         String[] rs = responsibilities.split(",");
         for (String responsibility : rs) {
-            addResponsability(idEmployee, responsibility, isVet);
+            if (isVet)
+                addResponsibilityVeterinarian(idEmployee, responsibility);
+            else
+                addResponsibilityKeeper(idEmployee, responsibility);
         }
     }
 
@@ -648,7 +648,7 @@ public class Hotel implements Serializable {
 
         // Verificar se as especies existem
         String[] species = speciesIdentifiers.split(",");
-        ArrayList<Specie> approvedSpecies = new ArrayList<>();
+        TreeMap<String, Specie> approvedSpecies = new TreeMap<String, Specie>(String.CASE_INSENSITIVE_ORDER);
 
         if (speciesIdentifiers.length() > 0) {
             for (String specie : species) {
@@ -656,7 +656,7 @@ public class Hotel implements Serializable {
                     throw new UnknownSpeciesException(specie);
                 }
 
-                approvedSpecies.add(getSpecie(specie));
+                approvedSpecies.put(specie, _species.get(specie));
             }
         }
 
@@ -678,15 +678,18 @@ public class Hotel implements Serializable {
     /**
      * check if animal was appropriately vaccinated
      * 
-     * @param animalSpecieId
+     * @param specieId
      * @param vaccineKey
      * @return true if animal was vaccinated
      */
-    public boolean wasAppropriatelyVaccinated(String animalSpecieId, String vaccineKey) {
+    public void wasAppropriatelyVaccinated(String specieId, String vaccineKey)
+    throws DamagedVaccinationException {
         Vaccine vaccine = getVaccine(vaccineKey);
-        String SpecieId = getAnimal(animalSpecieId).getIdSpecie();
-
-        return vaccine.isApprovedFor(getSpecie(SpecieId));
+        String SpecieId = getAnimal(specieId).getIdSpecie();
+        
+        if(!vaccine.isApprovedFor(specieId)) {
+            throw new DamagedVaccinationException(vaccineKey, specieId);
+        }
     }
 
     /**
@@ -699,10 +702,10 @@ public class Hotel implements Serializable {
      * @throws UnknownVeterinarianException
      * @throws VeterinarianAuthorizedException
      */
-    public boolean shouldBeVaccinated(String vaccineKey, String veterinarianKey, String animalKey)
+    public void shouldBeVaccinated(String vaccineKey, String veterinarianKey, String animalKey)
     throws UnknownVeterinarianException, VeterinarianAuthorizedException {
         // Verificar se o employee e veterinario
-        if (!isVet(veterinarianKey)) {
+        if (!(_employees.get(veterinarianKey) instanceof Veterinarian)) {
             throw new UnknownVeterinarianException(veterinarianKey);
         }
         
@@ -712,8 +715,6 @@ public class Hotel implements Serializable {
         if (!veterinarian.hasPermission(specieId)) {
             throw new VeterinarianAuthorizedException(specieId, veterinarianKey);
         }
-
-        return true;
     }
 
     /**
@@ -729,7 +730,7 @@ public class Hotel implements Serializable {
 
         // Adicionar ao registo do hotel
         _vaccinations.add(application);
-        if (!wasAppropriatelyVaccinated(animalKey, vaccineKey)) {
+        if (!getVaccine(vaccineKey).isApprovedFor(getAnimal(animalKey).getIdSpecie())) {
             _wrongVaccinations.add(application);
         }
 
@@ -758,7 +759,7 @@ public class Hotel implements Serializable {
         return Collections.unmodifiableCollection(_wrongVaccinations);
     }
 
-    /**
+    /**UnknownVeterinarianException
      * get all historic vaccinations of a veterinarian
      * 
      * @param employeeKey
@@ -767,7 +768,7 @@ public class Hotel implements Serializable {
      */
     public Collection<String> veterinarianHistoric(String employeeKey) 
     throws UnknownVeterinarianException{
-        if (!isVet(employeeKey)) {
+        if (!(_employees.get(employeeKey) instanceof Veterinarian)) {
             throw new UnknownVeterinarianException(employeeKey);
         }
 
@@ -791,7 +792,6 @@ public class Hotel implements Serializable {
         return getAnimal(animalKey).getVaccinations();
     }
 
-
     
     /**
      * get the effort of a tree
@@ -801,8 +801,13 @@ public class Hotel implements Serializable {
     public double getTreeEffort(String idTree) {
 
         Tree t = getTree(idTree);
+        String type = "PERENE";
 
-        double effort = t.getCleaningDifficulty() * getFlora().getSazonalEffort(idTree) * Math.log(t.getTreeAge() + 1);
+        if (t instanceof DeciduousTree) {
+            type = "CADUCA";
+        }
+
+        double effort = t.getCleaningDifficulty() * getFlora().getSazonalEffort(type) * Math.log(t.getTreeAge() + 1);
 
         return effort;
     }
@@ -813,17 +818,25 @@ public class Hotel implements Serializable {
      * @param idAnimal
      * @return satisfaction
      */
-    public double getSatisfactionAnimal(String idAnimal) {
+    public double getSatisfactionAnimal(String idAnimal) throws UnknownSpeciesException, UnknownAnimalException{
+        
+        if (_animals.get(idAnimal) == null) {
+            throw new UnknownAnimalException(idAnimal);
+        }
 
         String currHabit = _animals.get(idAnimal).getCurrentHabitat();
         Habitat h = _habitats.get(currHabit);
 
-        int equals = h.iguais(idAnimal);
+        int equals = h.animalEquals(idAnimal);
         int population = h.getPopulationNumber();
         int diferent = population - (equals + 1);
         int area = h.getArea();
-        String influ = h.getSpeciesInfluence(idAnimal);
+        String influ = h.getSpeciesInfluence(_animals.get(idAnimal).getIdSpecie());
         int adequacy = 0;
+
+        if (influ == null) {
+            throw new UnknownSpeciesException(_animals.get(idAnimal).getIdSpecie());
+        }
         
         if (influ.equals("POS")) {
             adequacy = 20;
@@ -838,12 +851,136 @@ public class Hotel implements Serializable {
     }
 
 
+    /**
+     * get the satisfaction of a veterinarian
+     * 
+     * @param idVeterinarian
+     * @return satisfaction
+     */
+    public double getVeterinarianSatisfaction(String idVeterinarian) {
+
+        Veterinarian e = (Veterinarian) _employees.get(idVeterinarian);
+
+        List<String> vetSpecies = e.getVeterinarianSpecies();
+        int counter = 0;
+        double work = 0;
+        int animPop;
+
+        for (String idSpecie: vetSpecies) {
+            counter = 0;
+            for (String idVet: _employees.keySet()) {
+                Employee emp = _employees.get(idVet);
+                if (emp instanceof Veterinarian) {
+                    Veterinarian v = (Veterinarian) emp;
+
+                    if (v.hasPermission(idSpecie)) {
+                        counter += 1;
+                    }
+                }
+            }
+            animPop = _species.get(idSpecie).getNumberAnimals();
+            work += (animPop / counter);
+        }
+
+        return 20 - work;
+    }
+
+    /**
+     * get Keeper Satisfaction
+     * 
+     * @param idKeeper
+     * @return satisfaction
+     */
+    
+    public double getKeeperSatisfaction(String idKeeper) {
+
+        Keeper k = (Keeper) _employees.get(idKeeper);
+
+        List<String> keepHabitats = k.getHabitatKeeper();
+        double work = 0;
+        double habitWork;
+        int counter = 0;
+
+        for (String idHabitat: keepHabitats) {
+
+            // Calculate Habitat Work
+            Habitat h = _habitats.get(idHabitat);
+            habitWork = h.getArea() + (3 * h.getPopulationNumber());
+            List<String> habitTrees = h.getHabitatTrees();
+            for (String idTree: habitTrees) {
+                habitWork += getTreeEffort(idTree);
+            }
+
+            // Calculate Number of Keepers who can work in this habitat
+            counter = 0;
+            for (String idEmployee: _employees.keySet()) {
+                Employee emp = _employees.get(idEmployee);
+                if (emp instanceof Keeper) {
+                    Keeper kep  = (Keeper) emp;
+
+                    if (kep.hasHabitat(idHabitat)) {
+                        counter += 1;
+                    }
+                }
+            }
+
+            work += (habitWork / counter);
+        }
+
+        return 300 - work;
+    }
+
+    /**
+     * 
+     */
+    public int commonCharacters(String str1, String str2) {
+
+        int commonCount = 0;
+        StringBuilder commonChars = new StringBuilder();
+        
+        // Iterate through str1 and check if the character exists in str2
+        for (int i = 0; i < str1.length(); i++) {
+            char c = str1.charAt(i);
+            if (str2.indexOf(c) != -1 && commonChars.indexOf(String.valueOf(c)) == -1) {
+                commonChars.append(c);
+                commonCount++; // Increment the count when a new common character is found
+            }
+        }
+        
+        return commonCount;
+    }
+
+    /**
+     * 
+     */
+    public int damage(String idVaccine, String idAnimal) {
+
+        Animal a = _animals.get(idAnimal);
+        Vaccine v = _vaccines.get(idVaccine);
+        String currIdSpecie = a.getIdSpecie();
+        int damage = 0;
+        int max = 0;
+
+        // case specie is on vaccine accepted species
+        if (v.isApprovedFor(currIdSpecie)) {
+            damage = 0;
+        }
+
+        // else
+        else {
+            List<String> acceptedSpecies = v.getAcceptedSpecies();
+            for(String idSpecie: acceptedSpecies) {
+                max = Math.max(currIdSpecie.length(),idSpecie.length()) - commonCharacters(currIdSpecie,idSpecie);
+
+                if (max > damage) {
+                    damage = max;
+                }
+            }
+        }
 
 
-
-
-
-
+        return damage;
+    }
 
 
     /**

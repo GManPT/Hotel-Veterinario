@@ -2,6 +2,8 @@ package hva.vaccine;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 import java.io.Serializable;
 import hva.animal.Specie;
 
@@ -14,7 +16,7 @@ public class Vaccine implements Serializable{
     private String _nameVaccine;
 
     /** list of approved species for the vaccine */
-    private List<Specie> _approvedSpecies;
+    private Map<String, Specie> _approvedSpecies;
 
     /** list of applications of the vaccine */
     private List<String> _applications;
@@ -22,11 +24,27 @@ public class Vaccine implements Serializable{
     /**
      * Constructor for the Vaccine class
      */
-    public Vaccine(String id, String name, ArrayList<Specie> approvedSpecies) {
+    public Vaccine(String id, String name, TreeMap<String, Specie> approvedSpecies) {
         _idVaccine = id;
         _nameVaccine = name;
         _approvedSpecies = approvedSpecies;
         _applications = new ArrayList<String>();
+    }
+
+    /**
+     * get list of accepted species
+     * 
+     * @return list of species
+     */
+    public List<String> getAcceptedSpecies() {
+
+        List<String> list = new ArrayList<String>();
+
+        for (String idSpecie : _approvedSpecies.keySet()) {
+            list.add(idSpecie); 
+        }
+        
+        return list;
     }
 
     /**
@@ -67,8 +85,8 @@ public class Vaccine implements Serializable{
         if (!_approvedSpecies.isEmpty()) {
             species = "|";
 
-            for (Specie s : _approvedSpecies) {
-                species += s.getIdSpecie() + ",";
+            for (String s : _approvedSpecies.keySet()) {
+                species += s + ",";
             }
 
             species = species.substring(0, species.length() - 1);
@@ -83,8 +101,8 @@ public class Vaccine implements Serializable{
      * @param s the specie to check
      * @return true if the vaccine is approved for the specie, false otherwise
      */
-    public boolean isApprovedFor(Specie s) {
-        return _approvedSpecies.contains(s);
+    public boolean isApprovedFor(String s) {
+        return _approvedSpecies.containsKey(s);
     }
 
     public void addApplication(String vaccination) {

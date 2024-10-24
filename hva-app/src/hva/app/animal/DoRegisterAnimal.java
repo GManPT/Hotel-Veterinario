@@ -21,6 +21,7 @@ class DoRegisterAnimal extends Command<Hotel> {
         addStringField("animalKey", Prompt.animalKey());
         addStringField("animalName", Prompt.animalName());
         addStringField("speciesKey", Prompt.speciesKey());
+        addStringField("habitatKey", hva.app.habitat.Prompt.habitatKey());
     }
 
     /** @see pt.tecnico.uilib.menu.Command#execute() */
@@ -30,6 +31,7 @@ class DoRegisterAnimal extends Command<Hotel> {
             String animalKey = stringField("animalKey");
             String name = stringField("animalName");
             String speciesKey = stringField("speciesKey");
+            String habitatKey = stringField("habitatKey");
             String speciesName = null;
 
             /** Verify if the species exists, if not, ask for the species name */
@@ -39,7 +41,6 @@ class DoRegisterAnimal extends Command<Hotel> {
                 speciesName = Form.requestString(Prompt.speciesName());
             }
             
-            String habitatKey = Form.requestString(hva.app.habitat.Prompt.habitatKey());
             _receiver.registerNewAnimal(animalKey, name, speciesKey, speciesName, habitatKey);
 
         } catch (DuplicateAnimalException e) {

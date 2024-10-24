@@ -4,6 +4,8 @@ import hva.habitat.Habitat;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 
 public class Keeper extends Employee {
@@ -30,12 +32,38 @@ public class Keeper extends Employee {
     }
 
     /**
+     * get keeper habitats
+     * 
+     * @return list of habitats
+     */
+    public List<String> getHabitatKeeper() {
+
+        List<String> list = new ArrayList<String>();
+
+        for (String idHabitat : _habitats.keySet()) {
+            list.add(idHabitat); 
+        }
+        
+        return list;
+    }
+
+    /**
      * Remove a habitat from the keeper's list of habitats
      * 
      * @param h 
      */
     public void removeHabitat(Habitat h) {
         _habitats.remove(h);
+    }
+
+    /**
+     * Check if the Keeper has a certain habitat as resposibility
+     * 
+     * @param idHabitat
+     * @return true if the keeper has a certain habitat as resposibility
+     */
+    public boolean hasHabitat(String idHabitat) {
+        return _habitats.containsKey(idHabitat);
     }
 
     /**

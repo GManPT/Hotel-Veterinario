@@ -1,6 +1,9 @@
 package hva.app.employee;
 
 import hva.Hotel;
+import hva.exceptions.UnknownEmployeeException;
+import hva.exceptions.UnknownVeterinarianException;
+import hva.app.exceptions.UnknownEmployeeKeyException;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 
@@ -18,7 +21,15 @@ class DoShowSatisfactionOfEmployee extends Command<Hotel> {
     /** @see pt.tecnico.uilib.menu.Command#execute() */
     @Override
     protected void execute() throws CommandException {
-        // FIXME implement command for final delivery
+        try {
+            String employeeKey = stringField("employeeKey");
+            _receiver.isVet(employeeKey);
+            _display.popup(Math.round(_receiver.getVeterinarianSatisfaction(employeeKey)));
+        } catch(UnknownVeterinarianException e) {
+            _display.popup(Math.round(_receiver.getKeeperSatisfaction(e.getId())));
+        } catch (UnknownEmployeeException e) {
+            throw new UnknownEmployeeKeyException(e.getId());
+        }
     }
 
 }

@@ -1,7 +1,5 @@
 package hva.animal;
 
-import hva.CorrectComparator;
-
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Collection;
@@ -25,9 +23,19 @@ public class Specie implements Serializable{
      * Constructor of class Specie
      */
     public Specie(String id, String name) {
-        _animals = new TreeMap<String, Animal>(new CorrectComparator());
+        _animals = new TreeMap<String, Animal>(String.CASE_INSENSITIVE_ORDER);
         _idSpecie = id;
         _nameSpecie = name;
+    }
+
+    /**
+     * get number of animals
+     * 
+     * @return number of animals
+     */
+    
+    public int getNumberAnimals() {
+        return _animals.size();
     }
 
     /**

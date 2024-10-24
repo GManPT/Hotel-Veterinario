@@ -2,8 +2,6 @@ package hva;
 
 import java.io.*;
 import hva.exceptions.*;
-//FIXME import other Java classes
-//FIXME import other project classes
 
 /**
  * Class that represents the hotel application.
@@ -14,15 +12,17 @@ public class HotelManager {
     private Hotel _hotel = new Hotel();
 
     /** the path where the hotel is stored */
-    private String _filePath;  
+    private String _filePath;
 
     /** 
      * hotel changed
      * 
      * @return true if the hotel has been modified since the last save
      */
-    public boolean changed() {
-        return _hotel.isModified();
+    public void changed() throws StateChangedException {
+        if(_hotel.isModified()) {
+            throw new StateChangedException();
+        }
     }
 
     /** 

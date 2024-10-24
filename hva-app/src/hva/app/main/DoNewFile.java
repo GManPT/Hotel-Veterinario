@@ -1,10 +1,10 @@
 package hva.app.main;
 
 import hva.HotelManager;
+import hva.exceptions.StateChangedException;
 import pt.tecnico.uilib.forms.Form;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
-//FIXME import other classes if needed
 
 class DoNewFile extends Command<HotelManager> {
     DoNewFile(HotelManager receiver) {
@@ -13,11 +13,15 @@ class DoNewFile extends Command<HotelManager> {
 
     @Override
     protected final void execute() throws CommandException {
-
-        if (_receiver.changed() && Form.confirm(Prompt.saveBeforeExit())) { 
-            DoSaveFile file = new DoSaveFile(_receiver);
-            file.execute();
+        try {
+            _receiver.changed();
+        } catch (StateChangedException e) {
+            if (Form.confirm(Prompt.saveBeforeExit())) {
+                DoSaveFile file = new DoSaveFile(_receiver);
+                file.execute();
+            }
         }
         _receiver.resetHotel();
+
     }
 }

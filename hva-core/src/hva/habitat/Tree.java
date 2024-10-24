@@ -28,9 +28,6 @@ public abstract class Tree implements Serializable {
         _age = age;
         _cleaningDifficulty = cleaningDifficulty;
     }
-    
-    public abstract String getType();
-
 
     /**
      * get the id of the tree
