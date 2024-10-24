@@ -27,7 +27,7 @@ public class Keeper extends Employee {
      * @param h 
      */
     public void addHabitat(Habitat h) {
-        if (_habitats.get(h) == null)
+        if (!_habitats.containsKey(h.getIdHabitat()))
             _habitats.put(h.getIdHabitat(), h);
     }
 
@@ -53,7 +53,7 @@ public class Keeper extends Employee {
      * @param h 
      */
     public void removeHabitat(Habitat h) {
-        _habitats.remove(h);
+        _habitats.remove(h.getIdHabitat());
     }
 
     /**

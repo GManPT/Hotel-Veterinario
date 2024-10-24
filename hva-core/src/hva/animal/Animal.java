@@ -82,7 +82,16 @@ public class Animal implements Serializable {
      * @return healthStatus
      */
     public String getHealthStatus() {
-        return _healthStatus.isEmpty() ? "VOID" : _healthStatus.toString();
+        String result = String.join(", ", _healthStatus);
+        return _healthStatus.isEmpty() ? "VOID" : result;
+    }
+
+    /**
+     * set health status
+     * @param String healthStatus
+     */
+    public void setHealthStatus(String healthStatus) {
+        _healthStatus.add(healthStatus);
     }
 
     /**

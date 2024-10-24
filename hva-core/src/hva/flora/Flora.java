@@ -18,10 +18,6 @@ public class Flora implements Serializable{
 
     // Tree Map with the initial Season of each tree
     private Map<String,Season> _treeSeason;
-    
-
-    // Array with the effort of each season accotiding to the type of tree
-    private int[] _sazonal = {1,2,5,0,1,1,1,2};
 
     // constructor
     public Flora(Hotel hotel) {

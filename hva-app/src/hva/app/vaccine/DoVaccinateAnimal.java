@@ -32,7 +32,6 @@ class DoVaccinateAnimal extends Command<Hotel> {
 
             _receiver.shouldBeVaccinated(vaccineKey, veterinarianKey, animalKey);
             _receiver.vaccinateAnimal(vaccineKey, veterinarianKey, animalKey);
-            _receiver.wasAppropriatelyVaccinated(animalKey, vaccineKey);
 
         } catch(UnknownVeterinarianException e) {
             throw new UnknownVeterinarianKeyException(e.getId());

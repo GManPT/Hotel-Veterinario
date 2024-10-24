@@ -626,9 +626,7 @@ public class Hotel implements Serializable {
      * @return all employees
      */
     public Collection<Employee> employees() {
-        Collection<Employee> allEmployees = new ArrayList<>();
-        allEmployees.addAll(_employees.values());
-        return Collections.unmodifiableCollection(allEmployees);
+        return Collections.unmodifiableCollection(_employees.values());
     }
 
 
@@ -697,23 +695,6 @@ public class Hotel implements Serializable {
     }
 
     /**
-     * check if animal was appropriately vaccinated
-     * 
-     * @param specieId
-     * @param vaccineKey
-     * @return true if animal was vaccinated
-     */
-    public void wasAppropriatelyVaccinated(String specieId, String vaccineKey)
-    throws DamagedVaccinationException {
-        Vaccine vaccine = getVaccine(vaccineKey);
-        String SpecieId = getAnimal(specieId).getIdSpecie();
-        
-        if(!vaccine.isApprovedFor(specieId)) {
-            throw new DamagedVaccinationException(vaccineKey, specieId);
-        }
-    }
-
-    /**
      * check if animal should be vaccinated
      * 
      * @param vaccineKey
@@ -724,7 +705,7 @@ public class Hotel implements Serializable {
      * @throws VeterinarianAuthorizedException
      */
     public void shouldBeVaccinated(String vaccineKey, String veterinarianKey, String animalKey)
-    throws UnknownVeterinarianException, VeterinarianAuthorizedException {
+    throws UnknownVeterinarianException, VeterinarianAuthorizedException{
         // Verificar se o employee e veterinario
         if (!(_employees.get(veterinarianKey) instanceof Veterinarian)) {
             throw new UnknownVeterinarianException(veterinarianKey);
@@ -745,7 +726,7 @@ public class Hotel implements Serializable {
      * @param veterinarianKey
      * @param animalKey
      */
-    public void vaccinateAnimal(String vaccineKey, String veterinarianKey, String animalKey) {
+    public void vaccinateAnimal(String vaccineKey, String veterinarianKey, String animalKey) throws DamagedVaccinationException {
         Animal a = getAnimal(animalKey);
         String application = "REGISTO-VACINA|" + vaccineKey + "|" + veterinarianKey + "|" + a.getIdSpecie();
 
@@ -760,6 +741,33 @@ public class Hotel implements Serializable {
         ((Veterinarian) getEmployee(veterinarianKey)).addHistoric(application);
         a.addVaccination(application);
         _modified = true;
+
+        Vaccine v = getVaccine(vaccineKey);
+        String specieId = a.getIdSpecie();
+
+        if(!v.isApprovedFor(specieId)) {
+
+            int dam = damage(vaccineKey, animalKey);
+
+            if (dam == 0) {
+                a.setHealthStatus("CONFUSÃO");
+            }
+
+            else if (dam <= 4) {
+                a.setHealthStatus("ACIDENTE");;
+            }
+
+            else {
+                a.setHealthStatus("ERRO");
+            }
+
+            throw new DamagedVaccinationException(vaccineKey, animalKey);
+        }
+
+        else {
+            a.setHealthStatus("NORMAL");
+        }
+        
     }
 
     /**
@@ -983,21 +991,13 @@ public class Hotel implements Serializable {
         String currIdSpecie = a.getIdSpecie();
         int damage = 0;
         int max = 0;
+        List<String> acceptedSpecies = v.getAcceptedSpecies();
+        
+        for(String idSpecie: acceptedSpecies) {
+            max = Math.max(currIdSpecie.length(),idSpecie.length()) - commonCharacters(currIdSpecie,idSpecie);
 
-        // case specie is on vaccine accepted species
-        if (v.isApprovedFor(currIdSpecie)) {
-            damage = 0;
-        }
-
-        // else
-        else {
-            List<String> acceptedSpecies = v.getAcceptedSpecies();
-            for(String idSpecie: acceptedSpecies) {
-                max = Math.max(currIdSpecie.length(),idSpecie.length()) - commonCharacters(currIdSpecie,idSpecie);
-
-                if (max > damage) {
-                    damage = max;
-                }
+            if (max > damage) {
+                damage = max;
             }
         }
 
