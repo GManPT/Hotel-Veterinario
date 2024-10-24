@@ -84,6 +84,7 @@ public class Hotel implements Serializable {
     * Hotel Constructor
     */
     public Hotel() {
+        /** Init the attributes */
         _species = new TreeMap<String, Specie>(String.CASE_INSENSITIVE_ORDER);
         _animals = new TreeMap<String, Animal>(String.CASE_INSENSITIVE_ORDER);
         _habitats = new TreeMap<String, Habitat>(String.CASE_INSENSITIVE_ORDER);
@@ -93,9 +94,8 @@ public class Hotel implements Serializable {
         _vaccinations = new ArrayList<String>();
         _wrongVaccinations = new ArrayList<String>();
 
-        // Flora corresponding to this hotel
+        /** Create a new Flora for the hotel */
         _season = new Flora(this);
-        
     }
 
     /** 
@@ -116,59 +116,31 @@ public class Hotel implements Serializable {
         return _modified;
     }
 
-    public Flora getFlora() {
-        return _season;
-    }
-
+    /**
+     * Change the actual season to the next one
+     * 
+     * @return the number of the new season
+     */
     public int changeSeason() {
         _season.getCurrentSeason().advanceSeason();
         return _season.getCurrentSeason().getNumSeason();
     }
 
     /** 
-     * Check if species exist
+     * Check if species exist and sends result to App
      * 
      * @param idSpecie
-     * @return true if specie exists
+     * @throws UnknownSpeciesException
      */
     public void speciesExists(String idSpecie) throws UnknownSpeciesException {
+        /** Verify if idSpecie is a key of _species */
         if (!_species.containsKey(idSpecie)) {
             throw new UnknownSpeciesException(idSpecie);
         }
     }
 
     /** 
-     * Get the species
-     * 
-     * @param idSpecie
-     * @return the id of the specie
-     */
-    public Specie getSpecie(String idSpecie) {
-        return _species.get(idSpecie);
-    }
-
-    /** 
-     * Get all species
-     * 
-     * @param idAnimal
-     * @return true if animal exists
-     */
-    public boolean animalExists(String idAnimal) {
-        return _animals.containsKey(idAnimal);
-    }
-
-    /** 
-     * Get the animal
-     * 
-     * @param idAnimal
-     * @return Animal object found
-     */
-    public Animal getAnimal(String idAnimal) {
-        return _animals.get(idAnimal);
-    }
-
-    /** 
-     * Register a new specie
+     * Register a new specie by creating a new Specie object
      * 
      * @param idSpecie
      * @param nameSpecie
@@ -194,18 +166,18 @@ public class Hotel implements Serializable {
     public void registerNewAnimal(String idAnimal, String nameAnimal, String idSpecie,
                                 String nameSpecie, String idHabitat) 
     throws DuplicateAnimalException, UnknownHabitatException {
-        if (animalExists(idAnimal)) {
+        if (_animals.containsKey(idAnimal)) {
             throw new DuplicateAnimalException(idAnimal);
         }
 
-        Habitat habitat = getHabitat(idHabitat);
-        if (!habitatExists(idHabitat)) {
+        Habitat habitat = _habitats.get(idHabitat);
+        if (!(_habitats.containsKey(idHabitat))) {
             throw new UnknownHabitatException(idHabitat);
         }
 
         registerNewSpecie(idSpecie, nameSpecie);
-        Animal a = new Animal(idAnimal, nameAnimal, idSpecie, idHabitat);
-        getSpecie(idSpecie).addAnimaltoSpecie(a);
+        Animal a = new Animal(idAnimal, nameAnimal, _species.get(idSpecie).getIdSpecie(), habitat.getIdHabitat());
+        _species.get(idSpecie).addAnimaltoSpecie(a);
 
         habitat.addAnimaltoHabitat(a);
         _animals.put(idAnimal, a);
@@ -232,7 +204,7 @@ public class Hotel implements Serializable {
      */
     public void changeAnimalHabitat(String idAnimal, String habitatKey) 
     throws UnknownHabitatException, UnknownAnimalException {
-        Animal a = getAnimal(idAnimal);
+        Animal a = _animals.get(idAnimal);
         if (a == null) {
             throw new UnknownAnimalException(idAnimal);
         }
@@ -242,25 +214,14 @@ public class Hotel implements Serializable {
         }
 
         /** Remove from the old habitat */
-        getHabitat(a.getCurrentHabitat()).removeAnimal(a);
+        _habitats.get(a.getCurrentHabitat()).removeAnimal(a);
         a.setHabitat(habitatKey);
 
         /** Add to the new habitat */
-        getHabitat(habitatKey).addAnimaltoHabitat(a);
+        _habitats.get(habitatKey).addAnimaltoHabitat(a);
 
         _modified = true;
     }
-
-    /**
-     * get the habitat
-     * 
-     * @param idHabitat
-     * @return habitat 
-     */
-    public Habitat getHabitat(String idHabitat) {
-        return _habitats.get(idHabitat);
-    }
-
 
     /**
      * get the tree
@@ -323,7 +284,7 @@ public class Hotel implements Serializable {
             throw new UnknownHabitatException(habitatKey);
         }
 
-        getHabitat(habitatKey).setArea(area);
+        _habitats.get(habitatKey).setArea(area);
         _modified = true;
     }
 
@@ -344,7 +305,7 @@ public class Hotel implements Serializable {
             throw new UnknownSpeciesException(speciesKey);
         }
 
-        getHabitat(habitatKey).setSpeciesInfluence(speciesKey, habitatInfluence);
+        _habitats.get(habitatKey).setSpeciesInfluence(speciesKey, habitatInfluence);
         _modified = true;
     }
 
@@ -385,7 +346,7 @@ public class Hotel implements Serializable {
      */
     public Tree plantTreeHabitat (String idHabitat, String idTree, String treeName, int treeAge, int treeDifficulty, String treeType)
     throws DuplicateTreeException, UnknownHabitatException {
-        Habitat habitat = getHabitat(idHabitat);
+        Habitat habitat = _habitats.get(idHabitat);
         
         if (!habitatExists(idHabitat)) {
             throw new UnknownHabitatException(idHabitat);
@@ -557,7 +518,7 @@ public class Hotel implements Serializable {
             throw new ResponsibilityException(idEmployee, idSpecie);
         }
 
-        vet.addSpecie(getSpecie(idSpecie));
+        vet.addSpecie(_species.get(idSpecie));
         _modified = true;
     }
 
@@ -579,7 +540,7 @@ public class Hotel implements Serializable {
             throw new ResponsibilityException(idEmployee, idHabitat);
         }
 
-        k.addHabitat(getHabitat(idHabitat));
+        k.addHabitat(_habitats.get(idHabitat));
         _modified = true;
     }
 
@@ -604,7 +565,7 @@ public class Hotel implements Serializable {
             throw new ResponsibilityException(idEmployee, idHabitat);
         }
 
-        k.removeHabitat(getHabitat(idHabitat));
+        k.removeHabitat(_habitats.get(idHabitat));
         _modified = true;
     }
 
@@ -617,7 +578,7 @@ public class Hotel implements Serializable {
             throw new ResponsibilityException(idEmployee, idSpecie);
         }
 
-        vet.removeSpecie(getSpecie(idSpecie));
+        vet.removeSpecie(_species.get(idSpecie));
         _modified = true;
     }
 
@@ -676,7 +637,7 @@ public class Hotel implements Serializable {
                     throw new UnknownSpeciesException(specie);
                 }
 
-                approvedSpecies.put(specie, _species.get(specie));
+                approvedSpecies.put(_species.get(specie).getIdSpecie(), _species.get(specie));
             }
         }
 
@@ -712,13 +673,13 @@ public class Hotel implements Serializable {
             throw new UnknownVeterinarianException(veterinarianKey);
         }
 
-        if (!animalExists(animalKey)) {
+        if (!_animals.containsKey(animalKey)) {
             throw new UnknownAnimalException(animalKey);
         }
         
         // Verificar se o veterinario pode dar a vacina
         Veterinarian veterinarian = (Veterinarian) getEmployee(veterinarianKey);
-        String specieId = getAnimal(animalKey).getIdSpecie();
+        String specieId = _animals.get(animalKey).getIdSpecie();
         if (!veterinarian.hasPermission(specieId)) {
             throw new VeterinarianAuthorizedException(specieId, veterinarianKey);
         }
@@ -733,7 +694,7 @@ public class Hotel implements Serializable {
      */
     public void vaccinateAnimal(String vaccineKey, String veterinarianKey, String animalKey) 
     throws DamagedVaccinationException, UnknownVaccineException {
-        Animal a = getAnimal(animalKey);
+        Animal a = _animals.get(animalKey);
         String application = "REGISTO-VACINA|" + vaccineKey + "|" + veterinarianKey + "|" + a.getIdSpecie();
 
         // Adicionar ao registo do hotel
@@ -742,7 +703,7 @@ public class Hotel implements Serializable {
             throw new UnknownVaccineException(vaccineKey);
         }
 
-        if (!getVaccine(vaccineKey).isApprovedFor(getAnimal(animalKey).getIdSpecie())) {
+        if (!getVaccine(vaccineKey).isApprovedFor(_animals.get(animalKey).getIdSpecie())) {
             _wrongVaccinations.add(application);
         }
 
@@ -824,11 +785,11 @@ public class Hotel implements Serializable {
      */
     public Collection<String> medicalActsOnAnimal(String animalKey)
     throws UnknownAnimalException {
-        if (!animalExists(animalKey)) {
+        if (!_animals.containsKey(animalKey)) {
             throw new UnknownAnimalException(animalKey);
         }
 
-        return getAnimal(animalKey).getVaccinations();
+        return _animals.get(animalKey).getVaccinations();
     }
 
     
@@ -849,7 +810,7 @@ public class Hotel implements Serializable {
             o = 1;
         }
 
-        double effort = t.getCleaningDifficulty() * getFlora().getSazonalEffort(o) * Math.log(t.getTreeAge() + 1);
+        double effort = t.getCleaningDifficulty() * _season.getSazonalEffort(o) * Math.log(t.getTreeAge() + 1);
 
         return effort;
     }
