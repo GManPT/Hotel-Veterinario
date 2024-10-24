@@ -106,4 +106,17 @@ public class HotelManager {
         return _hotel;
     }
 
+    public int changeSeason() {
+        return _hotel.changeSeason();
+    }
+
+    public double globalSatisfaction() {
+        try {
+            return _hotel.globalSatisfaction();
+        } catch (UnknownAnimalException | UnknownSpeciesException e) {
+            return 0;
+        }
+
+    }
+
 }

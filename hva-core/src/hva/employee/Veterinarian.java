@@ -3,7 +3,7 @@ package hva.employee;
 import hva.animal.Specie;
 
 import java.util.Map;
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,7 +22,7 @@ public class Veterinarian extends Employee {
      */
     public Veterinarian(String idEmployee, String nameEmployee) {
         super(idEmployee, nameEmployee);
-        _species = new HashMap<String, Specie>();
+        _species = new TreeMap<String, Specie>(String.CASE_INSENSITIVE_ORDER);
         _historic = new ArrayList<String>();
     }
 

@@ -35,7 +35,7 @@ class DoAddTreeToHabitat extends Command<Hotel> {
             int treeDifficulty = integerField("treeDifficulty");
             String treeType = optionField("treeType");
                 
-            _receiver.plantTreeHabitat(habitatKey, treeKey, treeName, treeAge, treeDifficulty, treeType);
+            _display.popup(_receiver.plantTreeHabitat(habitatKey, treeKey, treeName, treeAge, treeDifficulty, treeType));
 
         } catch (DuplicateTreeException e) {
             throw new DuplicateTreeKeyException(e.getId());

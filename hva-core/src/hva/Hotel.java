@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import hva.Flora;
+import hva.flora.Flora;
 import hva.habitat.Habitat;
 import hva.animal.Animal;
 import hva.animal.Specie;
@@ -117,6 +117,11 @@ public class Hotel implements Serializable {
 
     public Flora getFlora() {
         return _season;
+    }
+
+    public int changeSeason() {
+        _season.getCurrentSeason().advanceSeason();
+        return _season.getCurrentSeason().getNumSeason();
     }
 
     /** 
@@ -255,6 +260,7 @@ public class Hotel implements Serializable {
         return _habitats.get(idHabitat);
     }
 
+
     /**
      * get the tree
      * 
@@ -376,7 +382,7 @@ public class Hotel implements Serializable {
      * @throws DuplicateTreeException
      * @throws UnknownHabitatException
      */
-    public void plantTreeHabitat (String idHabitat, String idTree, String treeName, int treeAge, int treeDifficulty, String treeType)
+    public Tree plantTreeHabitat (String idHabitat, String idTree, String treeName, int treeAge, int treeDifficulty, String treeType)
     throws DuplicateTreeException, UnknownHabitatException {
         Habitat habitat = getHabitat(idHabitat);
         
@@ -391,12 +397,20 @@ public class Hotel implements Serializable {
         }
 
         if (treeType.equals("CADUCA")) {
-            habitat.addTree(new DeciduousTree(idTree, treeName, treeAge, treeDifficulty));
+            Tree t = new DeciduousTree(idTree, treeName, treeAge, treeDifficulty);
+            habitat.addTree(t);
+            _trees.put(idTree, t);
+            t.setBioCycle(_season.getCurrentSeason().getBioCycleCaduca());
         } else if (treeType.equals("PERENE")) {
-            habitat.addTree(new EvergreenTree(idTree, treeName, treeAge, treeDifficulty));
+            Tree t = new EvergreenTree(idTree, treeName, treeAge, treeDifficulty);
+            habitat.addTree(t);
+            _trees.put(idTree, t);
+            t.setBioCycle(_season.getCurrentSeason().getBioCyclePerene());
         }
 
+        _season.putFloraSeason(idTree);
         _modified = true;
+        return _trees.get(idTree);
     }
 
     /**
@@ -416,9 +430,15 @@ public class Hotel implements Serializable {
         }
 
         if (treeType.equals("CADUCA")) {
-            _trees.put(idTree, new DeciduousTree(idTree, treeName, treeAge, treeDifficulty));
+            Tree t = new DeciduousTree(idTree, treeName, treeAge, treeDifficulty);
+            _trees.put(idTree, t);
+            t.setBioCycle(_season.getCurrentSeason().getBioCycleCaduca());
+            _season.putFloraSeason(idTree);
         } else if (treeType.equals("PERENE")) {
-            _trees.put(idTree, new EvergreenTree(idTree, treeName, treeAge, treeDifficulty));
+            Tree t = new EvergreenTree(idTree, treeName, treeAge, treeDifficulty);
+            _trees.put(idTree, t);
+            t.setBioCycle(_season.getCurrentSeason().getBioCyclePerene());
+            _season.putFloraSeason(idTree);
         }
         _modified = true;
     }   
@@ -477,13 +497,15 @@ public class Hotel implements Serializable {
      * @param idEmployee
      * @return true if employee is a veterinarian
      */
-    public void isVet(String idEmployee) throws UnknownEmployeeException, UnknownVeterinarianException {
-        if (_employees.get(idEmployee) == null) {
-            throw new UnknownEmployeeException(idEmployee);
-        }
-
+    public void isVet(String idEmployee) throws UnknownVeterinarianException {
         if (!(_employees.get(idEmployee) instanceof Veterinarian)) {
             throw new UnknownVeterinarianException(idEmployee);
+        }
+    }
+
+    public void isEmployee(String idEmployee) throws UnknownEmployeeException {
+        if (_employees.get(idEmployee) == null) {
+            throw new UnknownEmployeeException(idEmployee);
         }
     }
 
@@ -571,31 +593,30 @@ public class Hotel implements Serializable {
         }
     }
 
-    /**
-     * remove responsibility from an employee
-     * 
-     * @param idEmployee
-     * @param id
-     * @throws UnknownEmployeeException
-     * @throws ResponsibilityException
-     */
-    public void removeResponsibility(String idEmployee, String id) 
-    throws UnknownEmployeeException, ResponsibilityException {
-        Employee employee = getEmployee(idEmployee);
 
-        // Verificar se o employee existe
-        if (!employeeExists(idEmployee)) {
-            throw new UnknownEmployeeException(idEmployee);
+    public void removeResponsibilityKeeper(String idEmployee, String idHabitat)
+    throws ResponsibilityException{
+
+        Keeper k = (Keeper) getEmployee(idEmployee);
+
+        if (!_habitats.containsKey(idHabitat) || !k.hasHabitat(idHabitat)) {
+            throw new ResponsibilityException(idEmployee, idHabitat);
         }
 
-        // Verificar se a especie ou habitat existe
-        if (!_species.containsKey(id)) {
-            ((Veterinarian) employee).removeSpecie(getSpecie(id));
-        } else if (habitatExists(id)) {
-            ((Keeper) employee).removeHabitat(getHabitat(id));
-        } else {
-            throw new ResponsibilityException(idEmployee, id);
+        k.removeHabitat(getHabitat(idHabitat));
+        _modified = true;
+    }
+
+
+    public void removeResponsibilityVeterinarian(String idEmployee, String idSpecie) 
+    throws ResponsibilityException{
+        Veterinarian vet = (Veterinarian) getEmployee(idEmployee);
+
+        if (!_species.containsKey(idSpecie) || !vet.hasPermission(idSpecie)) {
+            throw new ResponsibilityException(idEmployee, idSpecie);
         }
+
+        vet.removeSpecie(getSpecie(idSpecie));
         _modified = true;
     }
 
@@ -801,13 +822,16 @@ public class Hotel implements Serializable {
     public double getTreeEffort(String idTree) {
 
         Tree t = getTree(idTree);
-        String type = "PERENE";
-
+        int o;
+        
         if (t instanceof DeciduousTree) {
-            type = "CADUCA";
+            o = 0;
+        }
+        else {
+            o = 1;
         }
 
-        double effort = t.getCleaningDifficulty() * getFlora().getSazonalEffort(type) * Math.log(t.getTreeAge() + 1);
+        double effort = t.getCleaningDifficulty() * getFlora().getSazonalEffort(o) * Math.log(t.getTreeAge() + 1);
 
         return effort;
     }
@@ -846,7 +870,6 @@ public class Hotel implements Serializable {
         }
 
         double satisfaction = 20 + (3 * equals) - (2 * diferent) + (area / population) + adequacy;
-
         return satisfaction;
     }
 
@@ -980,6 +1003,28 @@ public class Hotel implements Serializable {
 
 
         return damage;
+    }
+
+    public double globalSatisfaction() throws UnknownSpeciesException, UnknownAnimalException {
+        
+        double globalSats = 0;
+
+        for (String idAnimal: _animals.keySet()) {
+            globalSats += getSatisfactionAnimal(idAnimal);
+        }
+        
+        for (String idEmployee: _employees.keySet()) {
+            Employee e = _employees.get(idEmployee);
+
+            if (e instanceof Keeper) {
+                globalSats += getKeeperSatisfaction(idEmployee);
+            }
+            else {
+                globalSats += getVeterinarianSatisfaction(idEmployee);
+            }
+        }
+        
+        return globalSats;
     }
 
 

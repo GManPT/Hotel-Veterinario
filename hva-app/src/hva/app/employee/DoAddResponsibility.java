@@ -19,6 +19,7 @@ class DoAddResponsibility extends Command<Hotel> {
     DoAddResponsibility(Hotel receiver) {
         super(Label.ADD_RESPONSABILITY, receiver);
         addStringField("employeeKey", Prompt.employeeKey());
+        addStringField("responsibility", Prompt.responsibilityKey());
     }
 
     /** @see pt.tecnico.uilib.menu.Command#execute() */
@@ -26,13 +27,14 @@ class DoAddResponsibility extends Command<Hotel> {
     protected void execute() throws CommandException {
         try {
             String employeeKey = stringField("employeeKey");
+            String idWork = stringField("responsibility");
 
             try {
                 _receiver.isVet(employeeKey);
-                String idWork = Form.requestString(hva.app.animal.Prompt.speciesKey());
+                _receiver.isEmployee(employeeKey);
                 _receiver.addResponsibilityVeterinarian(employeeKey, idWork);
             } catch (UnknownVeterinarianException e) {
-                String idWork = Form.requestString(hva.app.habitat.Prompt.habitatKey());
+                _receiver.isEmployee(employeeKey);
                 _receiver.addResponsibilityKeeper(employeeKey, idWork);
             }
 

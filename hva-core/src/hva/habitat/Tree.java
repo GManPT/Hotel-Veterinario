@@ -29,6 +29,8 @@ public abstract class Tree implements Serializable {
         _cleaningDifficulty = cleaningDifficulty;
     }
 
+    public abstract void setBioCycle(String newBioCycle);
+
     /**
      * get the id of the tree
      * 

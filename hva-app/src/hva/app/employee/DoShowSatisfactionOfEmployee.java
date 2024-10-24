@@ -23,6 +23,7 @@ class DoShowSatisfactionOfEmployee extends Command<Hotel> {
     protected void execute() throws CommandException {
         try {
             String employeeKey = stringField("employeeKey");
+            _receiver.isEmployee(employeeKey);
             _receiver.isVet(employeeKey);
             _display.popup(Math.round(_receiver.getVeterinarianSatisfaction(employeeKey)));
         } catch(UnknownVeterinarianException e) {

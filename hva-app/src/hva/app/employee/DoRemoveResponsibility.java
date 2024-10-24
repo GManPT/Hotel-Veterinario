@@ -5,6 +5,7 @@ import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 import hva.exceptions.ResponsibilityException;
 import hva.exceptions.UnknownEmployeeException;
+import hva.exceptions.UnknownVeterinarianException;
 import hva.app.exceptions.UnknownEmployeeKeyException;
 import hva.app.exceptions.NoResponsibilityException;
 
@@ -27,7 +28,13 @@ class DoRemoveResponsibility extends Command<Hotel> {
             String employeeKey = stringField("employeeKey");
             String responsibilityKey = stringField("responsibilityKey");
 
-            _receiver.removeResponsibility(employeeKey, responsibilityKey);
+            try {
+                _receiver.isEmployee(employeeKey);
+                _receiver.isVet(employeeKey);
+                _receiver.removeResponsibilityVeterinarian(employeeKey, responsibilityKey);
+            } catch(UnknownVeterinarianException e) {
+                _receiver.removeResponsibilityKeeper(employeeKey, responsibilityKey);
+            }
 
         } catch (ResponsibilityException e) {
             throw new NoResponsibilityException(e.getId(), e.getResponsibility());

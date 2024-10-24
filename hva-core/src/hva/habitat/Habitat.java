@@ -223,11 +223,10 @@ public class Habitat implements Serializable {
         String s = _animals.get(idAnimal).getIdSpecie();
         int count = 0;
 
-        for (String key : _animals.keySet()) {
-            if (_animals.get(key).getIdSpecie() == s) {
+        for (Animal a : _animals.values()) {
+            if (a.getIdSpecie().equals(s)) {
                 count += 1;
             }
-             
         }
 
         return count -1;
