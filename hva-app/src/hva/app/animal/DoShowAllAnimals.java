@@ -16,7 +16,7 @@ class DoShowAllAnimals extends Command<Hotel> {
     /** @see pt.tecnico.uilib.menu.Command#execute() */
     @Override
     protected final void execute() {
-        _display.popup(_receiver.speciesAnimals());
+        _display.popup(_receiver.allAnimals());
     }
 
 }

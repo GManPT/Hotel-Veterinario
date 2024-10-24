@@ -1,8 +1,8 @@
 package hva.flora;
 
-public class Winter extends Season{
+public class WinterState extends SeasonState {
 
-    public Winter(Flora flora) {
+    public WinterState(Flora flora) {
         super(flora, 3, "SEMFOLHAS","LARGARFOLHAS",0,2);
     }
 

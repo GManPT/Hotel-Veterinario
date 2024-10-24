@@ -24,6 +24,11 @@ import hva.employee.Employee;
 import hva.employee.Keeper;
 import hva.employee.Veterinarian;
 import hva.vaccine.Vaccine;
+import hva.calculatesatisfaction.AnimalSatisfaction;
+import hva.calculatesatisfaction.KeeperSatisfaction;
+import hva.calculatesatisfaction.VeterinarianSatisfaction;
+import hva.calculatesatisfaction.CalculateStrategy;
+
 
 import hva.exceptions.DuplicateAnimalException;
 import hva.exceptions.DuplicateHabitatException;
@@ -126,6 +131,54 @@ public class Hotel implements Serializable {
         return _season.getCurrentSeason().getNumSeason();
     }
 
+    /**
+     * get the flora
+     * @return flora
+     */
+    public Flora getFlora() {
+        return _season;
+    }
+
+    /**
+     * get Animal
+     * @return Animal
+     */
+    public Animal getAnimal(String idAnimal) {
+        return _animals.get(idAnimal);
+    }
+    
+    /**
+     * get Habitat
+     * @return Habitat
+     */
+    public Habitat getHabitat(String idHabitat) {
+        return _habitats.get(idHabitat);
+    }
+
+    /**
+     * get Specie
+     * @return Specie
+     */
+    public Specie getSpecie(String idSpecie) {
+        return _species.get(idSpecie);
+    }
+
+    /**
+     * get Employee
+     * @return Employee
+     */
+    public Employee getEmployee(String idEmployee) {
+        return _employees.get(idEmployee);
+    }
+
+    /**
+     * get Employees KeySet
+     * @return keySet
+     */
+    public Collection<String> getEmployeesKeySet() {
+        return _employees.keySet();
+    }
+
     /** 
      * Check if species exist and sends result to App
      * 
@@ -142,12 +195,13 @@ public class Hotel implements Serializable {
     /** 
      * Register a new specie by creating a new Specie object
      * 
-     * @param idSpecie
+     * @param specieKey
      * @param nameSpecie
      */
-    public void registerNewSpecie(String idSpecie, String nameSpecie) {
+    public void registerNewSpecie(String specieKey, String nameSpecie) {
+        /** Create a new specie only if nameSpecie is not null */
         if (nameSpecie != null) {
-            _species.put(idSpecie, new Specie(idSpecie, nameSpecie));
+            _species.put(specieKey, new Specie(specieKey, nameSpecie));
             _modified = true;
         }
     }
@@ -155,61 +209,68 @@ public class Hotel implements Serializable {
     /** 
      * Register a new animal and also the specie in case it doesn't exist yet
      * 
-     * @param idAnimal
+     * @param animalKey
      * @param nameAnimal
-     * @param idSpecie
+     * @param specieKey
      * @param nameSpecie
-     * @param idHabitat
+     * @param habitatKey
      * @throws DuplicateAnimalException
      * @throws UnknownHabitatException
      */
-    public void registerNewAnimal(String idAnimal, String nameAnimal, String idSpecie,
-                                String nameSpecie, String idHabitat) 
+    public void registerNewAnimal(String animalKey, String nameAnimal, String specieKey,
+                                String nameSpecie, String habitatKey) 
     throws DuplicateAnimalException, UnknownHabitatException {
-        if (_animals.containsKey(idAnimal)) {
-            throw new DuplicateAnimalException(idAnimal);
+        /** Check if the animal already exists */
+        if (_animals.containsKey(animalKey)) {
+            throw new DuplicateAnimalException(animalKey);
         }
 
-        Habitat habitat = _habitats.get(idHabitat);
-        if (!(_habitats.containsKey(idHabitat))) {
-            throw new UnknownHabitatException(idHabitat);
+        /** Check if the habitat exists */
+        Habitat habitat = _habitats.get(habitatKey);
+        if (!(_habitats.containsKey(habitatKey))) {
+            throw new UnknownHabitatException(habitatKey);
         }
 
-        registerNewSpecie(idSpecie, nameSpecie);
-        Animal a = new Animal(idAnimal, nameAnimal, _species.get(idSpecie).getIdSpecie(), habitat.getIdHabitat());
-        _species.get(idSpecie).addAnimaltoSpecie(a);
+        /** Register the new specie and animal */
+        registerNewSpecie(specieKey, nameSpecie);
+        Animal a = new Animal(animalKey, nameAnimal, _species.get(specieKey).getIdSpecie(), habitat.getIdHabitat());
+        _species.get(specieKey).addAnimaltoSpecie(a);
 
+        /** Add the animal to the habitat */
         habitat.addAnimaltoHabitat(a);
-        _animals.put(idAnimal, a);
+        _animals.put(animalKey, a);
 
         _modified = true;
     }
 
     /**
-     * Get all animals
+     * Get all animals and send them to App from printing purposes
      * 
-     * @return all animals
+     * @return an unmodifiable collection of all animals
      */
-    public Collection<Animal> speciesAnimals() {
+    public Collection<Animal> allAnimals() {
         return Collections.unmodifiableCollection(_animals.values());
     }
 
     /**
-     * changes the animal habitat
+     * Change the habitat of an animal. Removes the animal from the old habitat
+     * and adds it to the new one
      * 
-     * @param idAnimal
+     * @param animalKey
      * @param habitatKey
      * @throws UnknownHabitatException
      * @throws UnknownAnimalException
      */
-    public void changeAnimalHabitat(String idAnimal, String habitatKey) 
+    public void changeAnimalHabitat(String animalKey, String habitatKey) 
     throws UnknownHabitatException, UnknownAnimalException {
-        Animal a = _animals.get(idAnimal);
+        /** Check if the animal exists */
+        Animal a = _animals.get(animalKey);
         if (a == null) {
-            throw new UnknownAnimalException(idAnimal);
+            throw new UnknownAnimalException(animalKey);
         }
 
-        if (!habitatExists(habitatKey)) {
+        /** Check if the habitat exists */
+        if (!_habitats.containsKey(habitatKey)) {
             throw new UnknownHabitatException(habitatKey);
         }
 
@@ -224,55 +285,38 @@ public class Hotel implements Serializable {
     }
 
     /**
-     * get the tree
+     * Get a tree from the trees map by its id. Used in Flora
      * 
-     * @param idTree
+     * @param treeKey
      * @return tree
      */
-    public Tree getTree(String idTree) {
-        return _trees.get(idTree);
+    public Tree getTree(String treeKey) {
+        return _trees.get(treeKey);
     }
 
     /**
-     * check if habitat exists
+     * Register a new habitat and add it to the habitats map
      * 
-     * @param idHabitat
-     * @return true if habitat exists
-     */
-    public boolean habitatExists(String idHabitat) {
-        return _habitats.containsKey(idHabitat);
-    }
-
-    /**
-     * check if tree exists
-     * 
-     * @param idTree
-     * @return true if the tree exists
-     */
-    public boolean treeExists(String idTree) {
-        return _trees.containsKey(idTree);
-    }
-
-    /**
-     * register a new habitat
-     * 
-     * @param idHabitat
+     * @param habitatKey
      * @param name
      * @param area
      * @throws DuplicateHabitatException
      */
-    public void registerNewHabitat (String idHabitat, String name, int area) throws
+    public void registerNewHabitat (String habitatKey, String name, int area) throws
     DuplicateHabitatException {
-        if (habitatExists(idHabitat)) {
-            throw new DuplicateHabitatException(idHabitat);
+        /** Check if the habitat already exists */
+        if (_habitats.containsKey(habitatKey)) {
+            throw new DuplicateHabitatException(habitatKey);
         }
 
-        _habitats.put(idHabitat, new Habitat(idHabitat, name, area));
+        /** Create a new habitat */
+        _habitats.put(habitatKey, new Habitat(habitatKey, name, area));
+
         _modified = true;
     }
 
     /**
-     * change the habitat area
+     * Change the area of a habitat
      * 
      * @param habitatKey
      * @param area
@@ -280,51 +324,61 @@ public class Hotel implements Serializable {
      */
     public void changeHabitatArea(String habitatKey, int area)
     throws UnknownHabitatException {
-        if (!habitatExists(habitatKey)) {
+        /** Check if the habitat exists */
+        if (!_habitats.containsKey(habitatKey)) {
             throw new UnknownHabitatException(habitatKey);
         }
 
+        /** Change the area of the habitat */
         _habitats.get(habitatKey).setArea(area);
         _modified = true;
     }
 
     /**
-     * change the habitat influence
+     * Change the influence of a habitat on a species based on the value
+     * of the parameter habitatInfluence
      * 
      * @param habitatKey
      * @param speciesKey
-     * @param habitatInfluence
+     * @param habitatInfluence (POS, NEG, NEU)
      */
     public void changeHabitatInfluence(String habitatKey, String speciesKey, String habitatInfluence)
     throws UnknownHabitatException, UnknownSpeciesException {
-        if (!habitatExists(habitatKey)) {
+        /** Check if the habitat exists */
+        if (!_habitats.containsKey(habitatKey)) {
             throw new UnknownHabitatException(habitatKey);
         }
 
+        /** Check if the species exists */
         if (!_species.containsKey(speciesKey)) {
             throw new UnknownSpeciesException(speciesKey);
         }
-
+        
+        /** Change the influence of the habitat on the species */
         _habitats.get(habitatKey).setSpeciesInfluence(speciesKey, habitatInfluence);
+
         _modified = true;
     }
 
     /**
-     * get all trees
+     * Get all trees from an habitat in a collection and send them to
+     * App for printing
      * 
-     * @param idHabitat
-     * @return all habitats
+     * @param habitatKey
+     * @return a collection of all trees in a habitat
      */
-    public Collection<Tree> trees(String idHabitat) throws UnknownHabitatException {
-        if (!habitatExists(idHabitat)) {
-            throw new UnknownHabitatException(idHabitat);
+    public Collection<Tree> allTrees(String habitatKey) throws UnknownHabitatException {
+        if (!_habitats.containsKey(habitatKey)) {
+            throw new UnknownHabitatException(habitatKey);
         }
 
-        return _habitats.get(idHabitat).getTrees();
+        /** Get all trees from the habitat */
+        return _habitats.get(habitatKey).getTrees();
     }
 
     /**
-     * return all habitats and trees
+     * Get all habitats followed by their trees and send them to App
+     * for printing
      * 
      * @return all habitats and trees
      */
@@ -333,197 +387,209 @@ public class Hotel implements Serializable {
     }
 
     /**
-     * plant a tree in a habitat
+     * Plant a tree in a habitat and add a tree to a flora to keep
+     * track of the season it was planted
      * 
-     * @param idHabitat
-     * @param idTree
+     * @param habitatKey
+     * @param treeKey
      * @param treeName
      * @param treeAge
      * @param treeDifficulty
      * @param treeType
      * @throws DuplicateTreeException
      * @throws UnknownHabitatException
+     * @return the tree planted
      */
-    public Tree plantTreeHabitat (String idHabitat, String idTree, String treeName, int treeAge, int treeDifficulty, String treeType)
-    throws DuplicateTreeException, UnknownHabitatException {
-        Habitat habitat = _habitats.get(idHabitat);
+    public Tree plantTreeHabitat (String habitatKey, String treeKey, String treeName, int treeAge,
+    int treeDifficulty, String treeType) throws DuplicateTreeException, UnknownHabitatException {
+        Habitat habitat = _habitats.get(habitatKey);
         
-        if (!habitatExists(idHabitat)) {
-            throw new UnknownHabitatException(idHabitat);
+        if (!_habitats.containsKey(habitatKey)) {
+            throw new UnknownHabitatException(habitatKey);
         }
 
+        /** Check if the tree already exists in the habitat */
         for (Habitat h : _habitats.values()) {
-            if (h.treeExists(idTree)) {
-                throw new DuplicateTreeException(idTree);
+            if (h.treeExists(treeKey)) {
+                throw new DuplicateTreeException(treeKey);
             }
         }
 
         if (treeType.equals("CADUCA")) {
-            Tree t = new DeciduousTree(idTree, treeName, treeAge, treeDifficulty);
+            Tree t = new DeciduousTree(treeKey, treeName, treeAge, treeDifficulty);
             habitat.addTree(t);
-            _trees.put(idTree, t);
+            _trees.put(treeKey, t);
+
+            /** Set the biocycle of the tree to Caduca */
             t.setBioCycle(_season.getCurrentSeason().getBioCycleCaduca());
         } else if (treeType.equals("PERENE")) {
-            Tree t = new EvergreenTree(idTree, treeName, treeAge, treeDifficulty);
+            Tree t = new EvergreenTree(treeKey, treeName, treeAge, treeDifficulty);
             habitat.addTree(t);
-            _trees.put(idTree, t);
+            _trees.put(treeKey, t);
+
+            /** Set the biocycle of the tree to Perene */
             t.setBioCycle(_season.getCurrentSeason().getBioCyclePerene());
         }
 
-        _season.putFloraSeason(idTree);
+        /** Update the flora with a tree so it can keep track of the season */
+        _season.putFloraSeason(treeKey);
         _modified = true;
-        return _trees.get(idTree);
+        return _trees.get(treeKey);
     }
 
     /**
-     * plant a tree
+     * Plant a tree in the hotel and add it to the trees map
      * 
-     * @param idTree
+     * @param treeKey
      * @param treeName
      * @param treeAge
      * @param treeDifficulty
      * @param treeType
      * @throws DuplicateTreeException
      */
-    public void plantTree(String idTree, String treeName, int treeAge, int treeDifficulty, String treeType) 
+    public void plantTree(String treeKey, String treeName, int treeAge, int treeDifficulty, String treeType) 
     throws DuplicateTreeException {
-        if (treeExists(idTree)) {
-            throw new DuplicateTreeException(idTree);
+        /** Check if the tree already exists */
+        if (_trees.containsKey(treeKey)) {
+            throw new DuplicateTreeException(treeKey);
         }
 
+        /** Same logic as plantTreeHabit() */
         if (treeType.equals("CADUCA")) {
-            Tree t = new DeciduousTree(idTree, treeName, treeAge, treeDifficulty);
-            _trees.put(idTree, t);
+            Tree t = new DeciduousTree(treeKey, treeName, treeAge, treeDifficulty);
+            _trees.put(treeKey, t);
             t.setBioCycle(_season.getCurrentSeason().getBioCycleCaduca());
-            _season.putFloraSeason(idTree);
         } else if (treeType.equals("PERENE")) {
-            Tree t = new EvergreenTree(idTree, treeName, treeAge, treeDifficulty);
-            _trees.put(idTree, t);
+            Tree t = new EvergreenTree(treeKey, treeName, treeAge, treeDifficulty);
+            _trees.put(treeKey, t);
             t.setBioCycle(_season.getCurrentSeason().getBioCyclePerene());
-            _season.putFloraSeason(idTree);
         }
+
+        _season.putFloraSeason(treeKey);
         _modified = true;
     }   
 
     /**
-     * deal with trees
+     * Deal with importFile's trees when imported with an habitat.
+     * Adds which trees are in which habitat
      * 
-     * @param idHabitat
+     * @param habitatKey
      * @param trees
      * @throws DuplicateTreeException
      * @throws UnknownHabitatException
      * @throws UnknownTreeException
      */
-    public void dealTrees(String idHabitat, String trees) throws UnknownHabitatException,
+    public void dealTrees(String habitatKey, String trees) throws UnknownHabitatException,
     DuplicateTreeException, UnknownTreeException {
+        /** Split the trees string into a list */
         String[] ts = trees.split(",");
         for (String tree : ts) {
-            if (!treeExists(tree)) {
+            if (!_trees.containsKey(tree)) {
                 throw new UnknownTreeException(tree);
             }
 
-            Tree t = getTree(tree);
-            plantTreeHabitat(idHabitat, t.getIdTree(), t.getName(), t.getTreeAge(),
-            t.getCleaningDifficulty(), t instanceof DeciduousTree ? "CADUCA" : "PERENE");  
+            /** Get the tree */
+            Tree t = _trees.get(tree);
+
+            /** Call plantTreeHabitat() to add the tree to the habitat */
+            plantTreeHabitat(_habitats.get(habitatKey).getIdHabitat(), t.getIdTree(), t.getName(),
+            t.getTreeAge(), t.getCleaningDifficulty(), t instanceof DeciduousTree ? "CADUCA" : "PERENE");  
         }
     }
 
     /**
-     * get all animals in a habitat
+     * Get all animals in a habitat and send them to App for printing
      * 
-     * @param idHabitat
+     * @param habitatKey
      * @return all animals in a habitat
      */
-    public Collection<Animal> animalsInHabitat(String idHabitat)
+    public Collection<Animal> animalsInHabitat(String habitatKey)
     throws UnknownHabitatException {
-        if (!habitatExists(idHabitat)) {
-            throw new UnknownHabitatException(idHabitat);
+        if (!_habitats.containsKey(habitatKey)) {
+            throw new UnknownHabitatException(habitatKey);
         }
-
-        return _habitats.get(idHabitat).getAnimals();
+        
+        /** Get all animals in the habitat */
+        return _habitats.get(habitatKey).getAnimals();
     }
 
     /**
-     * get Employee
+     * Check if employee is a veterinarian. Important to help with App
+     * verifications.
      * 
-     * @param idEmployee
-     * @return Employee
-     */
-    public Employee getEmployee(String idEmployee) {
-        return _employees.get(idEmployee);
-    }
-
-    /**
-     * check if employee is a veterinarian
-     * 
-     * @param idEmployee
+     * @param employeeKey
+     * @throws UnknownVeterinarianException
      * @return true if employee is a veterinarian
      */
-    public void isVet(String idEmployee) throws UnknownVeterinarianException {
-        if (!(_employees.get(idEmployee) instanceof Veterinarian)) {
-            throw new UnknownVeterinarianException(idEmployee);
-        }
-    }
-
-    public void isEmployee(String idEmployee) throws UnknownEmployeeException {
-        if (_employees.get(idEmployee) == null) {
-            throw new UnknownEmployeeException(idEmployee);
+    public void isVet(String employeeKey) throws UnknownVeterinarianException {
+        /** Check if the employee is an instace of Veterinarian */
+        if (!(_employees.get(employeeKey) instanceof Veterinarian)) {
+            throw new UnknownVeterinarianException(employeeKey);
         }
     }
 
     /**
-     * check if employee exists
+     * Check if the employees id exists in the employees map
      * 
-     * @param idEmployee
-     * @return true if employee exists
+     * @param employeeKey
+     * @throws UnknownEmployeeException
+     * @return true if employee is a keeper
      */
-    public boolean employeeExists(String idEmployee) {
-        return _employees.containsKey(idEmployee);
+    public void isEmployee(String employeeKey) throws UnknownEmployeeException {
+        /** Check if the employee exists */
+        if (_employees.get(employeeKey) == null) {
+            throw new UnknownEmployeeException(employeeKey);
+        }
     }
 
     /**
-     * register a new employee
+     * Register a new employee and add it to the employees map
      * 
-     * @param idEmployee
+     * @param employeeKey
      * @param nameEmployee
      * @param employeeType
      * @throws DuplicateEmployeeException
      */
-    public void registerNewEmployee(String idEmployee, String nameEmployee, 
+    public void registerNewEmployee(String employeeKey, String nameEmployee, 
     String employeeType) throws DuplicateEmployeeException {
-        if (employeeExists(idEmployee)) {
-            throw new DuplicateEmployeeException(idEmployee);
+        /** Check if the employee already exists */
+        if (_employees.containsKey(employeeKey)) {
+            throw new DuplicateEmployeeException(employeeKey);
         }
 
+        /** Check if the employee is a keeper or a veterinarian */
         if (employeeType.equals("TRT")) {
-            _employees.put(idEmployee, new Keeper(idEmployee, nameEmployee));
+            _employees.put(employeeKey, new Keeper(employeeKey, nameEmployee));
         } else if (employeeType.equals("VET")) {
-            _employees.put(idEmployee, new Veterinarian(idEmployee, nameEmployee));
+            _employees.put(employeeKey, new Veterinarian(employeeKey, nameEmployee));
         }
+
         _modified = true;
     }
 
     /**
-     * add responsibility to a veterinarian
+     * Add a responsibility to a veterinarian. Note that the specie must exist
      * 
-     * @param idEmployee
-     * @param idSpecie
+     * @param employeeKey
+     * @param specieKey
      * @throws ResponsibilityException
      */
-    public void addResponsibilityVeterinarian(String idEmployee, String idSpecie)
+    public void addResponsibilityVeterinarian(String employeeKey, String specieKey)
     throws ResponsibilityException {
-        Veterinarian vet = (Veterinarian) getEmployee(idEmployee);
+        Veterinarian vet = (Veterinarian) _employees.get(employeeKey);
 
-        if (!_species.containsKey(idSpecie)) {
-            throw new ResponsibilityException(idEmployee, idSpecie);
+        /** Check if the specie exists */
+        if (!_species.containsKey(specieKey)) {
+            throw new ResponsibilityException(employeeKey, specieKey);
         }
 
-        vet.addSpecie(_species.get(idSpecie));
+        /** Add the specie to the veterinarian */
+        vet.addSpecie(_species.get(specieKey));
         _modified = true;
     }
 
     /** 
-     * add responsibility to a keeper
+     * Add a responsibility to a keeper. Note that the habitat must exist
      * 
      * @param idEmployee
      * @param idHabitat
@@ -531,54 +597,83 @@ public class Hotel implements Serializable {
      */
     public void addResponsibilityKeeper(String idEmployee, String idHabitat) 
     throws ResponsibilityException, UnknownEmployeeException {
-        Keeper k = (Keeper) getEmployee(idEmployee);
+        Keeper k = (Keeper) _employees.get(idEmployee);
         if (k == null) {
             throw new UnknownEmployeeException(idEmployee);
         }
 
+        /** Check if the habitat exists */
         if (!_habitats.containsKey(idHabitat)) {
             throw new ResponsibilityException(idEmployee, idHabitat);
         }
 
+        /** Add the habitat to the keeper */
         k.addHabitat(_habitats.get(idHabitat));
         _modified = true;
     }
 
-    public void dealResponsabilities(String idEmployee, String responsibilities, boolean isVet) 
+    /**
+     * Deal with importFile's responsibilities when imported with an employee.
+     * Adds which responsibilities are in which employee
+     * 
+     * @param employeeKey
+     * @param responsibilities
+     * @param isVet
+     * @throws ResponsibilityException
+     * @throws UnknownEmployeeException
+     */
+    public void dealResponsabilities(String employeeKey, String responsibilities, boolean isVet) 
     throws ResponsibilityException, UnknownEmployeeException {
         String[] rs = responsibilities.split(",");
+
+        /** Loop through all responsibilities and add them to the employee */
         for (String responsibility : rs) {
             if (isVet)
-                addResponsibilityVeterinarian(idEmployee, responsibility);
+                addResponsibilityVeterinarian(employeeKey, responsibility);
             else
-                addResponsibilityKeeper(idEmployee, responsibility);
+                addResponsibilityKeeper(employeeKey, responsibility);
         }
     }
 
-
-    public void removeResponsibilityKeeper(String idEmployee, String idHabitat)
+    /**
+     * Remove a responsibility from a keeper.
+     * 
+     * @param employeeKey
+     * @param habitatKey
+     * @throws ResponsibilityException
+     */
+    public void removeResponsibilityKeeper(String employeeKey, String habitatKey)
     throws ResponsibilityException{
 
-        Keeper k = (Keeper) getEmployee(idEmployee);
+        Keeper k = (Keeper) _employees.get(employeeKey);
 
-        if (!_habitats.containsKey(idHabitat) || !k.hasHabitat(idHabitat)) {
-            throw new ResponsibilityException(idEmployee, idHabitat);
+        /** Check if the habitat exists and if the keeper has the habitat */
+        if (!_habitats.containsKey(habitatKey) || !k.hasHabitat(habitatKey)) {
+            throw new ResponsibilityException(employeeKey, habitatKey);
         }
 
-        k.removeHabitat(_habitats.get(idHabitat));
+        /** Remove the habitat from the keeper */
+        k.removeHabitat(_habitats.get(habitatKey));
         _modified = true;
     }
 
-
-    public void removeResponsibilityVeterinarian(String idEmployee, String idSpecie) 
+    /**
+     * Remove a responsibility from a veterinarian.
+     * 
+     * @param employeeKey
+     * @param specieKey
+     * @throws ResponsibilityException
+     */
+    public void removeResponsibilityVeterinarian(String employeeKey, String specieKey) 
     throws ResponsibilityException{
-        Veterinarian vet = (Veterinarian) getEmployee(idEmployee);
+        Veterinarian vet = (Veterinarian) _employees.get(employeeKey);
 
-        if (!_species.containsKey(idSpecie) || !vet.hasPermission(idSpecie)) {
-            throw new ResponsibilityException(idEmployee, idSpecie);
+        /** Check if the specie exists and if the veterinarian has the specie */
+        if (!_species.containsKey(specieKey) || !vet.hasPermission(specieKey)) {
+            throw new ResponsibilityException(employeeKey, specieKey);
         }
 
-        vet.removeSpecie(_species.get(idSpecie));
+        vet.removeSpecie(_species.get(specieKey));
         _modified = true;
     }
 
@@ -678,7 +773,7 @@ public class Hotel implements Serializable {
         }
         
         // Verificar se o veterinario pode dar a vacina
-        Veterinarian veterinarian = (Veterinarian) getEmployee(veterinarianKey);
+        Veterinarian veterinarian = (Veterinarian) _employees.get(veterinarianKey);
         String specieId = _animals.get(animalKey).getIdSpecie();
         if (!veterinarian.hasPermission(specieId)) {
             throw new VeterinarianAuthorizedException(specieId, veterinarianKey);
@@ -709,7 +804,7 @@ public class Hotel implements Serializable {
 
         // Adicionar ao registo da vacina, veterinario e animal
         getVaccine(vaccineKey).addApplication(application);
-        ((Veterinarian) getEmployee(veterinarianKey)).addHistoric(application);
+        ((Veterinarian) _employees.get(veterinarianKey)).addHistoric(application);
         a.addVaccination(application);
         _modified = true;
 
@@ -772,7 +867,7 @@ public class Hotel implements Serializable {
             throw new UnknownVeterinarianException(employeeKey);
         }
 
-        Veterinarian veterinarian = (Veterinarian) getEmployee(employeeKey);
+        Veterinarian veterinarian = (Veterinarian) _employees.get(employeeKey);
         return veterinarian.HistoricVaccinations();
     }
 
@@ -795,12 +890,12 @@ public class Hotel implements Serializable {
     
     /**
      * get the effort of a tree
-     * @param idTree
+     * @param treeKey
      * @return effort
      */
-    public double getTreeEffort(String idTree) {
+    public double getTreeEffort(String treeKey) {
 
-        Tree t = getTree(idTree);
+        Tree t = _trees.get(treeKey);
         int o;
         
         if (t instanceof DeciduousTree) {
@@ -816,40 +911,25 @@ public class Hotel implements Serializable {
     }
 
     /**
-     * get the satisfaction of an animal
+     * Get the satisfaction of an animal
      * 
      * @param idAnimal
      * @return satisfaction
      */
-    public double getSatisfactionAnimal(String idAnimal) throws UnknownSpeciesException, UnknownAnimalException{
-        
-        if (_animals.get(idAnimal) == null) {
-            throw new UnknownAnimalException(idAnimal);
+    public double getSatisfactionAnimal(String animalKey) throws UnknownAnimalException, UnknownSpeciesException{
+        /** Check if the animal exists */
+        if (!_animals.containsKey(animalKey)) {
+            throw new UnknownAnimalException(animalKey);
         }
 
-        String currHabit = _animals.get(idAnimal).getCurrentHabitat();
-        Habitat h = _habitats.get(currHabit);
+        Habitat h = _habitats.get(_animals.get(animalKey).getCurrentHabitat());
 
-        int equals = h.animalEquals(idAnimal);
-        int population = h.getPopulationNumber();
-        int diferent = population - (equals + 1);
-        int area = h.getArea();
-        String influ = h.getSpeciesInfluence(_animals.get(idAnimal).getIdSpecie());
-        int adequacy = 0;
-
-        if (influ == null) {
-            throw new UnknownSpeciesException(_animals.get(idAnimal).getIdSpecie());
-        }
-        
-        if (influ.equals("POS")) {
-            adequacy = 20;
-        } 
-        else if (influ.equals("NEG")) {
-            adequacy = -20;
+        if (h.getSpeciesInfluence(_animals.get(animalKey).getIdSpecie()) == null) {
+            throw new UnknownSpeciesException(_animals.get(animalKey).getIdSpecie());
         }
 
-        double satisfaction = 20 + (3 * equals) - (2 * diferent) + (area / population) + adequacy;
-        return satisfaction;
+        CalculateStrategy aniSat = new AnimalSatisfaction(this);
+        return aniSat.calculate(animalKey);
     }
 
 
@@ -861,30 +941,8 @@ public class Hotel implements Serializable {
      */
     public double getVeterinarianSatisfaction(String idVeterinarian) {
 
-        Veterinarian e = (Veterinarian) _employees.get(idVeterinarian);
-
-        List<String> vetSpecies = e.getVeterinarianSpecies();
-        int counter = 0;
-        double work = 0;
-        int animPop;
-
-        for (String idSpecie: vetSpecies) {
-            counter = 0;
-            for (String idVet: _employees.keySet()) {
-                Employee emp = _employees.get(idVet);
-                if (emp instanceof Veterinarian) {
-                    Veterinarian v = (Veterinarian) emp;
-
-                    if (v.hasPermission(idSpecie)) {
-                        counter += 1;
-                    }
-                }
-            }
-            animPop = _species.get(idSpecie).getNumberAnimals();
-            work += (animPop / counter);
-        }
-
-        return 20 - work;
+        CalculateStrategy vetSat = new VeterinarianSatisfaction(this);
+        return vetSat.calculate(idVeterinarian);
     }
 
     /**
@@ -893,43 +951,10 @@ public class Hotel implements Serializable {
      * @param idKeeper
      * @return satisfaction
      */
-    
     public double getKeeperSatisfaction(String idKeeper) {
 
-        Keeper k = (Keeper) _employees.get(idKeeper);
-
-        List<String> keepHabitats = k.getHabitatKeeper();
-        double work = 0;
-        double habitWork;
-        int counter = 0;
-
-        for (String idHabitat: keepHabitats) {
-
-            // Calculate Habitat Work
-            Habitat h = _habitats.get(idHabitat);
-            habitWork = h.getArea() + (3 * h.getPopulationNumber());
-            List<String> habitTrees = h.getHabitatTrees();
-            for (String idTree: habitTrees) {
-                habitWork += getTreeEffort(idTree);
-            }
-
-            // Calculate Number of Keepers who can work in this habitat
-            counter = 0;
-            for (String idEmployee: _employees.keySet()) {
-                Employee emp = _employees.get(idEmployee);
-                if (emp instanceof Keeper) {
-                    Keeper kep  = (Keeper) emp;
-
-                    if (kep.hasHabitat(idHabitat)) {
-                        counter += 1;
-                    }
-                }
-            }
-
-            work += (habitWork / counter);
-        }
-
-        return 300 - work;
+        CalculateStrategy keepSat = new KeeperSatisfaction(this);
+        return keepSat.calculate(idKeeper);
     }
 
     /**

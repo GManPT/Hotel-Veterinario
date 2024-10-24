@@ -3,7 +3,7 @@ package hva.flora;
 import java.io.Serializable;
 
 
-public abstract class Season implements Serializable {
+public abstract class SeasonState implements Serializable {
 
     /** Class Serial Number */
     private static final long serialVersionUID = 202407081733L;
@@ -15,7 +15,7 @@ public abstract class Season implements Serializable {
     private int _sazonalEffortPerene;
     private Flora _flora;
 
-    public Season (Flora flora, int numSeason, String bioCycleCaduca, String bioCyclePerene, int sazonalEffortCaduca, int sazonalEffortPerene) {
+    public SeasonState (Flora flora, int numSeason, String bioCycleCaduca, String bioCyclePerene, int sazonalEffortCaduca, int sazonalEffortPerene) {
 
         _numSeason = numSeason;
         _bioCycleCaduca = bioCycleCaduca;

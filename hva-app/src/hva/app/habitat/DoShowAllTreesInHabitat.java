@@ -22,7 +22,7 @@ class DoShowAllTreesInHabitat extends Command<Hotel> {
     protected void execute() throws CommandException {
         try {
             String habitatKey = stringField("habitatKey");
-            _display.popup(_receiver.trees(habitatKey));
+            _display.popup(_receiver.allTrees(habitatKey));
         } catch (UnknownHabitatException e) {
             throw new UnknownHabitatKeyException(e.getId());
         }

@@ -1,8 +1,8 @@
 package hva.flora;
 
-public class Spring extends Season{
+public class SpringState extends SeasonState {
 
-    public Spring(Flora flora) {
+    public SpringState(Flora flora) {
         super(flora, 0, "GERARFOLHAS","GERARFOLHAS",1,1);
     }
 
