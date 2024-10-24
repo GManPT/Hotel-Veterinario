@@ -39,6 +39,7 @@ import hva.exceptions.UnknownAnimalException;
 import hva.exceptions.UnknownEmployeeException;
 import hva.exceptions.UnknownTreeException;
 import hva.exceptions.ImportFileException;
+import hva.exceptions.UnknownVaccineException;
 import hva.exceptions.UnrecognizedEntryException;
 import hva.exceptions.DamagedVaccinationException;
 
@@ -705,10 +706,14 @@ public class Hotel implements Serializable {
      * @throws VeterinarianAuthorizedException
      */
     public void shouldBeVaccinated(String vaccineKey, String veterinarianKey, String animalKey)
-    throws UnknownVeterinarianException, VeterinarianAuthorizedException{
+    throws UnknownVeterinarianException, VeterinarianAuthorizedException, UnknownAnimalException {
         // Verificar se o employee e veterinario
         if (!(_employees.get(veterinarianKey) instanceof Veterinarian)) {
             throw new UnknownVeterinarianException(veterinarianKey);
+        }
+
+        if (!animalExists(animalKey)) {
+            throw new UnknownAnimalException(animalKey);
         }
         
         // Verificar se o veterinario pode dar a vacina
@@ -726,12 +731,17 @@ public class Hotel implements Serializable {
      * @param veterinarianKey
      * @param animalKey
      */
-    public void vaccinateAnimal(String vaccineKey, String veterinarianKey, String animalKey) throws DamagedVaccinationException {
+    public void vaccinateAnimal(String vaccineKey, String veterinarianKey, String animalKey) 
+    throws DamagedVaccinationException, UnknownVaccineException {
         Animal a = getAnimal(animalKey);
         String application = "REGISTO-VACINA|" + vaccineKey + "|" + veterinarianKey + "|" + a.getIdSpecie();
 
         // Adicionar ao registo do hotel
         _vaccinations.add(application);
+        if (!vaccineExists(vaccineKey)) {
+            throw new UnknownVaccineException(vaccineKey);
+        }
+
         if (!getVaccine(vaccineKey).isApprovedFor(getAnimal(animalKey).getIdSpecie())) {
             _wrongVaccinations.add(application);
         }
@@ -985,22 +995,23 @@ public class Hotel implements Serializable {
      * 
      */
     public int damage(String idVaccine, String idAnimal) {
-
+        
         Animal a = _animals.get(idAnimal);
         Vaccine v = _vaccines.get(idVaccine);
         String currIdSpecie = a.getIdSpecie();
         int damage = 0;
         int max = 0;
         List<String> acceptedSpecies = v.getAcceptedSpecies();
-        
+
         for(String idSpecie: acceptedSpecies) {
-            max = Math.max(currIdSpecie.length(),idSpecie.length()) - commonCharacters(currIdSpecie,idSpecie);
+            String s1 = _species.get(currIdSpecie).getNameSpecie();
+            String s2 = _species.get(idSpecie).getNameSpecie();
+            max = Math.max(s1.length(),s2.length()) - commonCharacters(s1,s2);
 
             if (max > damage) {
                 damage = max;
             }
         }
-
 
         return damage;
     }

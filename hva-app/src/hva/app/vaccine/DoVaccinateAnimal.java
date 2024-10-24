@@ -6,6 +6,10 @@ import pt.tecnico.uilib.menus.CommandException;
 import hva.exceptions.UnknownVeterinarianException;
 import hva.exceptions.VeterinarianAuthorizedException;
 import hva.exceptions.DamagedVaccinationException;
+import hva.exceptions.UnknownVaccineException;
+import hva.exceptions.UnknownAnimalException;
+import hva.app.exceptions.UnknownAnimalKeyException;
+import hva.app.exceptions.UnknownVaccineKeyException;
 import hva.app.exceptions.UnknownVeterinarianKeyException;
 import hva.app.exceptions.VeterinarianNotAuthorizedException;
 
@@ -37,10 +41,12 @@ class DoVaccinateAnimal extends Command<Hotel> {
             throw new UnknownVeterinarianKeyException(e.getId());
         } catch (VeterinarianAuthorizedException e) {
             throw new VeterinarianNotAuthorizedException(e.getIdVet(), e.getId());
+        } catch (UnknownVaccineException e) {
+            throw new UnknownVaccineKeyException(e.getId());
+        } catch (UnknownAnimalException e) {
+            throw new UnknownAnimalKeyException(e.getId());
         } catch (DamagedVaccinationException e) {
             _display.popup(Message.wrongVaccine(e.getVaccine(), e.getSpecie()));
         }
-
     }
-
 }
