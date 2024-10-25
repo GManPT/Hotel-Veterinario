@@ -105,6 +105,11 @@ public class Vaccine implements Serializable{
         return _approvedSpecies.containsKey(s);
     }
 
+    /**
+     * add a new application of the vaccine
+     * 
+     * @param vaccination the application to add
+     */
     public void addApplication(String vaccination) {
         _applications.add(vaccination);
     }

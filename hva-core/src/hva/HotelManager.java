@@ -102,14 +102,30 @@ public class HotelManager {
         }
     }
 
+
+    /**
+     * get hotel
+     * 
+     * @return the hotel
+     */
     public Hotel getHotel() {
         return _hotel;
     }
 
+    /**
+     * change season
+     * 
+     * @return the new season as integer
+     */
     public int changeSeason() {
         return _hotel.changeSeason();
     }
 
+    /**
+     * global satisfaction
+     * 
+     * @return the global satisfaction
+     */
     public double globalSatisfaction() {
         try {
             return _hotel.globalSatisfaction();

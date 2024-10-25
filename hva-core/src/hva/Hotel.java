@@ -958,19 +958,28 @@ public class Hotel implements Serializable {
     }
 
     /**
+     * return the number of common characters between two strings
      * 
+     * @param str1
+     * @param str2
+     * @return commonCount
      */
     public int commonCharacters(String str1, String str2) {
 
         int commonCount = 0;
         StringBuilder commonChars = new StringBuilder();
         
-        // Iterate through str1 and check if the character exists in str2
+        str1 = str1.toLowerCase();
+        str2 = str2.toLowerCase();
+        
         for (int i = 0; i < str1.length(); i++) {
             char c = str1.charAt(i);
-            if (str2.indexOf(c) != -1 && commonChars.indexOf(String.valueOf(c)) == -1) {
-                commonChars.append(c);
-                commonCount++; // Increment the count when a new common character is found
+            
+            if (Character.isLetter(c)) {
+                if (str2.indexOf(c) != -1 && commonChars.indexOf(String.valueOf(c)) == -1) {
+                    commonChars.append(c);
+                    commonCount++;
+                }
             }
         }
         
@@ -978,7 +987,11 @@ public class Hotel implements Serializable {
     }
 
     /**
+     * calculates the damage of a vaccination
      * 
+     * @param idVaccine
+     * @param idAnimal
+     * @return damage
      */
     public int damage(String idVaccine, String idAnimal) {
         

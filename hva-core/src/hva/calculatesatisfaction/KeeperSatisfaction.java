@@ -9,12 +9,23 @@ import hva.habitat.Habitat;
 
 public class KeeperSatisfaction implements CalculateStrategy, Serializable {
     private static final long serialVersionUID = 202407081733L;
+
+    /** Hotel */
     private Hotel _hotel;
 
+    /**
+     * Constructor
+     * @param hotel Hotel
+     */
     public KeeperSatisfaction(Hotel hotel) {
         _hotel = hotel;
     }
 
+    /**
+     * Calculate the satisfaction of the keeper
+     * @param idKeeper String
+     * @return double
+     */
     @Override
     public double calculate(String idKeeper) {
 

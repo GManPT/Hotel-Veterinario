@@ -7,12 +7,22 @@ import hva.habitat.Habitat;
 
 public class AnimalSatisfaction implements CalculateStrategy {
 
+    /** Hotel */
     private Hotel _hotel;
 
+    /**
+     * Constructor
+     * @param hotel
+     */
     public AnimalSatisfaction(Hotel hotel) {
         _hotel = hotel;
     }
 
+    /**
+     * Calculate the satisfaction of an animal
+     * @param idAnimal
+     * @return
+     */
     @Override
     public double calculate(String idAnimal) {
 
