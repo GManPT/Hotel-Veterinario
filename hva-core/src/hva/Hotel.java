@@ -201,6 +201,7 @@ public class Hotel implements Serializable {
      */
     public void registerNewSpecie(String specieKey, String nameSpecie) 
     throws DuplicatedSpeciesNameException {
+        /** Check if the name of the specie already exists */
         for (Specie s : _species.values()) {
             if (s.getNameSpecie().equalsIgnoreCase(nameSpecie)) {
                 throw new DuplicatedSpeciesNameException();
