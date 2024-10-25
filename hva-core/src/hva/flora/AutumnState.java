@@ -15,7 +15,7 @@ public class AutumnState extends SeasonState {
      */
     public void advanceSeason() {
         // Change the season to Winter
-        super.getFlora().changeSeason(new Winter(super.getFlora()));
+        super.getFlora().changeSeason(new WinterState(super.getFlora()));
     }
 
     /**
@@ -23,7 +23,7 @@ public class AutumnState extends SeasonState {
      * @param s the season to check
      * @return true if the season is equal to the given season
      */
-    public boolean isEqualTo(Season s) {
-        return s instanceof Autumn;
+    public boolean isEqualTo(SeasonState s) {
+        return s instanceof AutumnState;
     }
 }

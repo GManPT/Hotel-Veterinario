@@ -15,16 +15,16 @@ public class Flora implements Serializable{
     private Hotel _hotel;
 
     // Current Season: 0 - Primavera, 1 - Verao, 2 - Outono, 3 - Inverno
-    private Season _currentSeason;
+    private SeasonState _currentSeason;
 
     // Tree Map with the initial Season of each tree
-    private Map<String,Season> _treeSeason;
+    private Map<String, SeasonState> _treeSeason;
 
     // constructor
     public Flora(Hotel hotel) {
         _hotel = hotel;
-        _currentSeason = new Spring(this);
-        _treeSeason = new TreeMap<String, Season>();
+        _currentSeason = new SpringState(this);
+        _treeSeason = new TreeMap<String, SeasonState>();
     }
 
     /**
@@ -32,7 +32,7 @@ public class Flora implements Serializable{
      * 
      * @param season
      */
-    public void changeSeason(Season season) {
+    public void changeSeason(SeasonState season) {
 
         _currentSeason = season;
 
@@ -47,7 +47,7 @@ public class Flora implements Serializable{
                 t.setBioCycle(_currentSeason.getBioCyclePerene());
             }
 
-            Season s = _treeSeason.get(id);
+            SeasonState s = _treeSeason.get(id);
             if (s.isEqualTo(_currentSeason)) {
                 t.increaseAge();
             }
@@ -83,7 +83,7 @@ public class Flora implements Serializable{
      * 
      * @return Season
      */
-    public Season getCurrentSeason() {
+    public SeasonState getCurrentSeason() {
         return _currentSeason;
     }
 

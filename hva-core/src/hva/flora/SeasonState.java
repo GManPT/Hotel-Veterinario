@@ -104,5 +104,5 @@ public abstract class SeasonState implements Serializable {
      * @param s
      * @return boolean
      */
-    public abstract boolean isEqualTo(Season s);
+    public abstract boolean isEqualTo(SeasonState s);
 }
