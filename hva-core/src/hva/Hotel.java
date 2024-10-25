@@ -31,6 +31,7 @@ import hva.calculatesatisfaction.CalculateStrategy;
 
 
 import hva.exceptions.DuplicateAnimalException;
+import hva.exceptions.DuplicatedSpeciesNameException;
 import hva.exceptions.DuplicateHabitatException;
 import hva.exceptions.DuplicateTreeException;
 import hva.exceptions.DuplicateEmployeeException;
@@ -198,7 +199,14 @@ public class Hotel implements Serializable {
      * @param specieKey
      * @param nameSpecie
      */
-    public void registerNewSpecie(String specieKey, String nameSpecie) {
+    public void registerNewSpecie(String specieKey, String nameSpecie) 
+    throws DuplicatedSpeciesNameException {
+        for (Specie s : _species.values()) {
+            if (s.getNameSpecie().equalsIgnoreCase(nameSpecie)) {
+                throw new DuplicatedSpeciesNameException();
+            }
+        }
+
         /** Create a new specie only if nameSpecie is not null */
         if (nameSpecie != null) {
             _species.put(specieKey, new Specie(specieKey, nameSpecie));
@@ -218,8 +226,8 @@ public class Hotel implements Serializable {
      * @throws UnknownHabitatException
      */
     public void registerNewAnimal(String animalKey, String nameAnimal, String specieKey,
-                                String nameSpecie, String habitatKey) 
-    throws DuplicateAnimalException, UnknownHabitatException {
+    String nameSpecie, String habitatKey) throws DuplicateAnimalException, UnknownHabitatException,
+    DuplicatedSpeciesNameException {
         /** Check if the animal already exists */
         if (_animals.containsKey(animalKey)) {
             throw new DuplicateAnimalException(animalKey);
@@ -1101,7 +1109,7 @@ public class Hotel implements Serializable {
 		} catch (DuplicateAnimalException | DuplicateHabitatException | DuplicateEmployeeException
                 | DuplicateVaccineException | UnknownSpeciesException | DuplicateTreeException
                 | UnknownHabitatException | UnknownEmployeeException | ResponsibilityException 
-                | UnknownTreeException | IOException e) {
+                | UnknownTreeException | DuplicatedSpeciesNameException | IOException e) {
             throw new ImportFileException(filename, e);
         }
     }
