@@ -725,12 +725,15 @@ public class Hotel implements Serializable {
      */
     public void registerVaccine(String idVaccine, String nameVaccine, String speciesIdentifiers)
     throws DuplicateVaccineException, UnknownSpeciesException {
-        // Verificar se o id ja existe
+        /** Check if the vaccine already exists */
         if (getVaccine(idVaccine) != null) {
             throw new DuplicateVaccineException(idVaccine);
         }
 
-        // Verificar se as especies existem
+        /** Remove spaces from speciesIdentifiers */
+        speciesIdentifiers = speciesIdentifiers.replaceAll("\\s+", "");
+
+        /** Work with given species */
         String[] species = speciesIdentifiers.split(",");
         TreeMap<String, Specie> approvedSpecies = new TreeMap<String, Specie>(String.CASE_INSENSITIVE_ORDER);
 
