@@ -11,7 +11,7 @@ public abstract class Tree implements Serializable {
     private String _idTree;
 
     /** name of the tree */
-    public String _nameTree;
+    private String _nameTree;
 
     /** age of the tree */
     private int _age;
