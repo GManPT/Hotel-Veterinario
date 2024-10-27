@@ -82,7 +82,7 @@ public class Animal implements Serializable {
      * @return healthStatus
      */
     public String getHealthStatus() {
-        String result = String.join(", ", _healthStatus);
+        String result = String.join(",", _healthStatus);
         return _healthStatus.isEmpty() ? "VOID" : result;
     }
 

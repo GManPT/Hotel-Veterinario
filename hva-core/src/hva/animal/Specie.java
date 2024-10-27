@@ -30,7 +30,7 @@ public class Specie implements Serializable{
 
     /**
      * get number of animals
-     * 
+     * setSpeciesInfluence
      * @return number of animals
      */
     

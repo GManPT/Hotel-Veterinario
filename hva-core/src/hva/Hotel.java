@@ -283,9 +283,11 @@ public class Hotel implements Serializable {
             throw new UnknownHabitatException(habitatKey);
         }
 
+        Habitat h = _habitats.get(habitatKey);
+
         /** Remove from the old habitat */
         _habitats.get(a.getCurrentHabitat()).removeAnimal(a);
-        a.setHabitat(habitatKey);
+        a.setHabitat(h.getIdHabitat());
 
         /** Add to the new habitat */
         _habitats.get(habitatKey).addAnimaltoHabitat(a);
@@ -364,7 +366,7 @@ public class Hotel implements Serializable {
         }
         
         /** Change the influence of the habitat on the species */
-        _habitats.get(habitatKey).setSpeciesInfluence(speciesKey, habitatInfluence);
+        _habitats.get(habitatKey).setSpeciesInfluence(_species.get(speciesKey).getIdSpecie(), habitatInfluence);
 
         _modified = true;
     }

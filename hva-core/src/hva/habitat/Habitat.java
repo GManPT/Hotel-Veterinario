@@ -41,7 +41,7 @@ public class Habitat implements Serializable {
         _area = area;
         _trees = new TreeMap<String, Tree>(String.CASE_INSENSITIVE_ORDER);
         _animals = new TreeMap<String, Animal>(String.CASE_INSENSITIVE_ORDER);
-        _speciesInfluence = new TreeMap<String, String>();
+        _speciesInfluence = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
     }
 
     /**
@@ -71,7 +71,7 @@ public class Habitat implements Serializable {
         return _area;
     }
 
-    /**
+    /**Arc 
      * set area habitat
      * 
      * @param area
@@ -105,7 +105,8 @@ public class Habitat implements Serializable {
      */
     public void addAnimaltoHabitat (Animal a) {
         _animals.put(a.getIdAnimal(), a);
-        _speciesInfluence.put(a.getIdSpecie(), "NEU");
+        if (!_speciesInfluence.containsKey(a.getIdSpecie()))
+            _speciesInfluence.put(a.getIdSpecie(), "NEU");
     }
 
     /**
@@ -136,7 +137,7 @@ public class Habitat implements Serializable {
 
     /**
      * has animals of specie
-     * 
+     * hasAnimalsOfSpecie
      * @param idSpecie
      * 
      * @return true if there are animals of that specie in the habitat
@@ -197,9 +198,7 @@ public class Habitat implements Serializable {
      * @param influence
      */
     public void setSpeciesInfluence(String idSpecie, String influence) {
-        if (hasAnimalsOfSpecie(idSpecie)) {
-            _speciesInfluence.put(idSpecie, influence);
-        }
+        _speciesInfluence.put(idSpecie, influence);
     }
 
     /**
@@ -229,7 +228,7 @@ public class Habitat implements Serializable {
             }
         }
 
-        return count -1;
+        return count - 1;
     }
 
     /**

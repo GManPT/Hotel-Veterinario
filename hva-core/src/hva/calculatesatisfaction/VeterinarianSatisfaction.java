@@ -33,7 +33,7 @@ public class VeterinarianSatisfaction implements CalculateStrategy, Serializable
         List<String> vetSpecies = e.getVeterinarianSpecies();
         int counter = 0;
         double work = 0;
-        int animPop;
+        double animPop;
 
         for (String idSpecie: vetSpecies) {
             counter = 0;
