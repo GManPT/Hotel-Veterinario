@@ -2,8 +2,6 @@ package hva.habitat;
 
 public class EvergreenTree extends Tree {
 
-
-
     /** 
      * To be implemented in final delivery, left "GERARFOLHAS" as default 
      * assuming that the tree is always in the same bio cycle

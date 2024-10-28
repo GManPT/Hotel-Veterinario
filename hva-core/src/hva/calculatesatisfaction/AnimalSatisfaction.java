@@ -1,11 +1,13 @@
 package hva.calculatesatisfaction;
 
 import hva.Hotel;
+import java.io.Serializable;
 import hva.exceptions.UnknownAnimalException;
 import hva.exceptions.UnknownSpeciesException;
 import hva.habitat.Habitat;
 
-public class AnimalSatisfaction implements CalculateStrategy {
+public class AnimalSatisfaction implements CalculateStrategy, Serializable {
+    private static final long serialVersionUID = 202407081733L;
 
     /** Hotel */
     private Hotel _hotel;
